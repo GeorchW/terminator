@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
         "target": "es6",
-        "module": "commonjs",
+        "module": "amd",
         "sourceMap": true,
         "strict": true,
+        "outFile": "index.js"
     }
 }
