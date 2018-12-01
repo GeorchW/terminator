@@ -1,0 +1,13 @@
+body{
+    font-size: 40px;
+}
+
+#sum {
+    /* display: inline-grid; */
+}
+
+#subtext {
+    color:rgb(122, 122, 122);
+    text-align:center;
+    font-size:0.2em;
+}
