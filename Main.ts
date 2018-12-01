@@ -10,8 +10,9 @@ class Equation {
     }
     public toClickableHtml(target: JQuery<HTMLElement>): JQuery<HTMLElement> {
         let context = { equation: this, lastElement: target }
-        return $("<div> = </div>")
-            .prepend(this.left.toClickableHtml(context))
+        return $("<div/>").attr("id", "equation").attr("class", "math")
+            .append(this.left.toClickableHtml(context))
+            .append($("<span/>").append("&nbsp;=&nbsp;"))
             .append(this.right.toClickableHtml(context))
     }
     public add(summand: Summand): Equation {
@@ -74,11 +75,14 @@ class Sum implements IHashable {
     private toClickableHtmlInner(context: EquationContext): JQuery<HTMLElement> {
         if (this.summands.array.length == 0)
             return $("<span>0</span>")
-        // if (this.summands.array.length == 1) {
-        //     // give possibility to move individual factors around
-        //     let suffix = $("<span/>").attr("id", "subtext").append("move summand")
-        //     return this.summands.array[0].toClickableHtml(context).append(suffix)
-        // }
+        if (this.summands.array.length == 1) {
+            // give possibility to move individual factors around
+            let mainText = $("<span/>").attr("id", "innerSum")
+                .append(this.summands.array[0].toClickableHtml(context))
+            let suffix = $("<span/>").attr("id", "subtext")
+                .append("move summand")
+            return $("<span/>").append(mainText).append($("<br/>")).append(suffix)
+        }
         else {
             let first = this.summands.array[0].toClickableHtml(context)
             let result = $("<span/>")

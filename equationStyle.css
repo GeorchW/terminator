@@ -2,12 +2,22 @@ body{
     font-size: 40px;
 }
 
-#sum {
-    /* display: inline-grid; */
+#equation {
+    display: inline-grid;
+}
+
+ .math, .math * {
+    grid-row: 1;
+} 
+
+#sum{
+    display: inline-block;
 }
 
 #subtext {
     color:rgb(122, 122, 122);
-    text-align:center;
     font-size:0.2em;
+    text-align:center;
+    display: block;
+    grid-row: 2;
 }
