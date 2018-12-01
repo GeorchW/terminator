@@ -79,7 +79,7 @@ class Sum implements IHashable {
             // give possibility to move individual factors around
             let mainText = $("<span/>").attr("id", "innerSum")
                 .append(this.summands.array[0].toClickableHtml(context))
-            let suffix = $("<span/>").attr("id", "subtext")
+            let suffix = $("<span/>").attr("id", "subtext").addClass("clickable")
                 .append("move summand")
             return $("<span/>").append(mainText).append($("<br/>")).append(suffix)
         }

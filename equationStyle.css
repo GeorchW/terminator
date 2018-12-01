@@ -3,10 +3,13 @@ body{
 }
 
 #equation {
-    display: inline-grid;
+    display: grid;
+    place-items: start;
+    justify-content: start;
+    text-align:center;
 }
 
- .math, .math * {
+.math, .math * {
     grid-row: 1;
 } 
 
@@ -16,8 +19,12 @@ body{
 
 #subtext {
     color:rgb(122, 122, 122);
-    font-size:0.2em;
+    font-size:0.5em;
     text-align:center;
     display: block;
     grid-row: 2;
+}
+
+.clickable:hover {
+    text-shadow: lightblue 0px 0px 0.5px;
 }
