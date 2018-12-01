@@ -69,7 +69,12 @@ class Sum implements IHashable {
                     mainText.append("&#8729;");
                 mainText.append(clickable(factor.name));
             }
-            let suffix = clickable("move summand", () => { }).attr("id", "subtext");
+            let suffix = clickable("move summand", event => {
+                if (context.currentEquation == undefined)
+                    return;
+                context.addNewEquation(context.currentEquation.add(summand.multiply(-1)));
+                $(event.target).css("color", "red");
+            }).attr("id", "subtext");
             return $("<span/>").append(mainText).append(suffix);
         }
         else {
