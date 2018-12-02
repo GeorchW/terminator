@@ -1,6 +1,6 @@
 interface IHashable {
-    hash: number,
-    equals(other: any): boolean
+    hash: number;
+    equals(other: any): boolean;
 }
 
 class OrderedFrozenSet<T extends IHashable> implements IHashable {
@@ -173,10 +173,10 @@ class Accumulator<TKey extends IHashable, TValue>{
         if(list != undefined) {
             if (list.some(x => x[0].equals(pair[0])))
                 return false
-            list.push(pair)
+            list.push([pair[0], pair[1]])
         }
         else {
-            this.buckets.set(objHash, [pair])
+            this.buckets.set(objHash, [[pair[0], pair[1]]])
         }
         return true
     }

@@ -1,5 +1,9 @@
+interface TermTransformer {
+    (term: Term): Term
+}
+
 class Equation {
-    constructor(public left: Sum, public right: Sum) { }
+    constructor(public left: Term, public right: Term) { }
     public toString(): string {
         return this.left + " = " + this.right;
     }
@@ -7,11 +11,11 @@ class Equation {
         return $("<div/>")
             .attr("id", "equation")
             .attr("class", "math")
-            .append(this.left.toClickableHtml(context))
+            .append(this.left.toClickable(context))
             .append($("<span/>").append("&nbsp;=&nbsp;"))
-            .append(this.right.toClickableHtml(context));
+            .append(this.right.toClickable(context));
     }
-    public add(summand: Summand): Equation {
-        return new Equation(this.left.add(summand), this.right.add(summand));
+    public apply(transformer: TermTransformer): Equation {
+        return new Equation(transformer(this.left), transformer(this.right));
     }
 }

@@ -1,14 +1,10 @@
-class Product implements IHashable {
-    readonly hash: number;
-    equals(other: any): boolean {
-        if (other instanceof Product)
-            return other.factorSet.equals(this.factorSet);
-        else
-            return false;
+class Product extends AbelianTerm{
+    public operationSymbol = "&#8729;" // this is the unicode cdot
+    public neutralElement = 1
+    public toStringWithModifier(item: AbelianTermItem): string {
+        return item.actualTerm.toString() + "^" + item.constantModifier
     }
-    readonly factorSet: OrderedFrozenSet<MathSymbol>;
-    constructor(public readonly factors: MathSymbol[]) {
-        this.factorSet = new OrderedFrozenSet(factors);
-        this.hash = this.factorSet.hash;
+    public createNew(terms: (AbelianTermItem | Term)[]): AbelianTerm {
+        return new Product(terms)
     }
 }

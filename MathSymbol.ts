@@ -1,4 +1,4 @@
-class MathSymbol implements IHashable {
+class MathSymbol extends Term {
     readonly hash: number;
     equals(other: any): boolean {
         if (other instanceof MathSymbol)
@@ -7,9 +7,19 @@ class MathSymbol implements IHashable {
             return false;
     }
     constructor(public name: string) {
+        super()
         this.hash = stringHash(name);
     }
     public toString(): string {
         return this.name;
+    }
+    public toClickable(context: EquationContext): JQuery<HTMLElement> {
+        return $("<span/>").append(this.name)
+    }
+    public canReduce(): boolean {
+        return false
+    }
+    public reduce(): Term {
+        return this
     }
 }

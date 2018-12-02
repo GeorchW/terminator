@@ -15,35 +15,37 @@ function clickable(
         .on("click", handler)
 }
 
-function onStart(){
+function onStart() {
     let equation = new Equation(
         new Sum(
             [
-                new Summand(-1,
+                new AbelianTermItem(-1,
                     new Product([
                         new MathSymbol("a"),
                         new MathSymbol("b")]))
             ]),
         new Sum(
             [
-                new Summand(1,
+                new AbelianTermItem(1,
                     new Product([
                         new MathSymbol("a"),
                         new MathSymbol("c")]))
-            ]),
+            ]).reduce(),
     )
+    // const reduceTest = new Sum([equation.left, equation.left]).reduce();
+    // console.log(reduceTest.toString(), reduceTest)
+    console.log(equation)
 
-    class DefaultEquationContext implements EquationContext{
+    class DefaultEquationContext implements EquationContext {
         currentEquation: Equation | undefined;
         addNewEquation(equation: Equation): void {
-            console.log(equation)
             const html = equation.toClickableHtml(this);
-            console.log(html)
             this.equationArea.append(html)
+            this.currentEquation = equation
         }
-        constructor(private equationArea : JQuery<HTMLElement>) { }
+        constructor(private equationArea: JQuery<HTMLElement>) { }
     }
-    
+
     let context = new DefaultEquationContext($("#equationArea").empty())
     context.addNewEquation(equation)
     //document.body.innerHTML = equation.toClickableHtml()
