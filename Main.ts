@@ -22,6 +22,7 @@ function onStart() {
                 new AbelianTermItem(-1,
                     new Product([
                         new MathSymbol("a"),
+                        new Constant(5),
                         new MathSymbol("b")]))
             ]),
         new Sum(
