@@ -17,7 +17,7 @@ abstract class AbelianTerm extends Term {
             return false;
     }
     public readonly terms: OrderedFrozenSet<AbelianTermItem>;
-    constructor(terms: (AbelianTermItem | Term)[], private readonly constant_: false | number = false) {
+    constructor(terms: (AbelianTermItem | Term)[]) {
         super();
         const mappedTerms = terms.map((s): [Term, number] => {
             if (s instanceof AbelianTermItem)
@@ -30,10 +30,7 @@ abstract class AbelianTerm extends Term {
             accumulated.array
                 .map(pair => new AbelianTermItem(pair[1], pair[0]))
                 .filter(summand => summand.constantModifier != 0));
-        this.hash = this.terms.hash ^ this.constant;
-    }
-    public get constant(): number {
-        return this.constant_ == false ? this.neutralElement : this.constant_
+        this.hash = this.terms.hash;
     }
     public abstract readonly operationSymbol: string
     public abstract readonly neutralElement: number
