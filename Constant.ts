@@ -4,10 +4,7 @@ class Constant extends Term {
     equals(other: any): boolean {
         return other instanceof Constant && this.value == other.value;
     }
-    public toString(): string {
+    public toDisplayable(): string {
         return this.value.toString();
-    }
-    public toClickable(context: EquationContext): JQuery<HTMLElement> {
-        return $("<span/>").append(this.value.toString());
     }
 }

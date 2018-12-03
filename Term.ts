@@ -25,9 +25,26 @@ abstract class Term implements IHashable {
         return result;
     }
     protected reductions: Reduction[] = [];
-    public abstract toClickable(context: EquationContext): JQuery<HTMLElement>;
+    public toString(): string {
+        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, true))
+        if (typeof result == "string")
+            return result
+        else
+            return result.get(0).outerHTML
+    }
+    public abstract toDisplayable(params: DisplayParams): JQuery<HTMLElement> | string;
 }
 
 interface Reduction {
     (term: Term): Term;
+}
+
+class DisplayParams {
+    constructor(
+        public context:EquationContext, 
+        public clickable:boolean, 
+        public preferString:boolean){}
+    unclickable(): DisplayParams {
+        return new DisplayParams(this.context, false, this.preferString)
+    }
 }
