@@ -1,15 +1,15 @@
-class Product extends AbelianTerm{
+class Product extends AbelianTerm {
     protected additionalReductions: Reduction[] = []
     public operationSymbol = "*"
-    public operationSymbolHtml = "&#8729;" // this is the unicode cdot
+    public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1
-    public toDisplayableWithoutModifier(term: Term, params:DisplayParams): string | JQuery<HTMLElement> {
-        if (term instanceof Sum){
+    public toDisplayableWithoutModifier(term: Term, params: DisplayParams): string | JQuery<HTMLElement> {
+        if (term instanceof Sum) {
             return $("<span/>").append("(", term.toDisplayable(params), ")")
         }
         return super.toDisplayableWithoutModifier(term, params)
     }
-    public toDisplayableWithModifier(item: AbelianTermItem, params:DisplayParams): string | JQuery<HTMLElement> {
+    public toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams): string | JQuery<HTMLElement> {
         const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params)
         if (params.preferString)
             return $("<span/>").append(baseTerm, "^", item.constantModifier.toString())

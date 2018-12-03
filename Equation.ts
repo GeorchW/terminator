@@ -8,7 +8,7 @@ class Equation {
         return this.left + " = " + this.right;
     }
     public toClickableHtml(context: EquationContext): JQuery<HTMLElement> {
-        const params = new DisplayParams(context, true, true)
+        const params = new DisplayParams(context, true, false)
         return $("<div/>")
             .attr("id", "equation")
             .attr("class", "math")
