@@ -35,7 +35,11 @@ interface Reduction {
 
 // Common base class for Sum and Product.
 abstract class AbelianTerm extends Term {
-    public static readonly abelianReductions = [mergeAssociativeTerms, removeNeutralElements, removeIdentityOperations]//, unifyConstants]
+    public static readonly abelianReductions = [
+        mergeAssociativeTerms, 
+        removeNeutralElements, 
+        removeIdentityOperations, 
+        replaceEmptySetWithNeutralElement]
     reductions = AbelianTerm.abelianReductions
     readonly hash: number
     equals(other: any): boolean {
