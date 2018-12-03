@@ -19,12 +19,17 @@ function onStart() {
     let equation = new Equation(
         new Sum(
             [
-                new AbelianTermItem(-1,
+                new AbelianTermItem(3,
                     new Product([
                         new MathSymbol("a"),
                         new Constant(5),
-                        new MathSymbol("b")]))
-            ]),
+                        new MathSymbol("c")])),
+                    new AbelianTermItem(-1,
+                        new Product([
+                            new MathSymbol("a"),
+                            new Constant(5),
+                            new MathSymbol("b")]))
+            ]).reduce(),
         new Sum(
             [
                 new AbelianTermItem(1,
@@ -43,6 +48,7 @@ function onStart() {
             const html = equation.toClickableHtml(this);
             this.equationArea.append(html)
             this.currentEquation = equation
+            console.log(this.currentEquation)
         }
         constructor(private equationArea: JQuery<HTMLElement>) { }
     }

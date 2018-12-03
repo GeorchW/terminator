@@ -1,13 +1,42 @@
 abstract class Term implements IHashable {
     abstract hash: number;
     abstract equals(other: any): boolean;
-    public canReduce(): boolean { return false }
-    public reduce(): Term { return this }
+    public reduce(): Term {
+        let result: Term = this
+        let lastResult: Term
+        let appliedReductions = 0
+        do {
+            lastResult = result
+            for (const reduction of this.reductions) {
+                result = reduction(result)
+                if (result != lastResult) {
+                    console.log("Successfully applied reduction " + reduction)
+                    console.log("Old => new:", lastResult.toString(), result.toString())
+                    console.log("Old => new:", [lastResult, result])
+                    appliedReductions++
+                    break
+                }
+            }
+            if (appliedReductions > 20) {
+                console.log("Too many reductions; breaking.", appliedReductions)
+                break
+            }
+        }
+        while (result != lastResult)
+        return result
+    }
+    protected reductions: Reduction[] = []
     public abstract toClickable(context: EquationContext): JQuery<HTMLElement>
+}
+
+interface Reduction {
+    (term: Term): Term
 }
 
 // Common base class for Sum and Product.
 abstract class AbelianTerm extends Term {
+    public static readonly abelianReductions = [mergeAssociativeTerms, removeNeutralElements, removeIdentityOperations]//, unifyConstants]
+    reductions = AbelianTerm.abelianReductions
     readonly hash: number
     equals(other: any): boolean {
         if (other instanceof AbelianTerm)
@@ -70,46 +99,6 @@ abstract class AbelianTerm extends Term {
         }
     }
     public abstract createNew(terms: (AbelianTermItem | Term)[]): AbelianTerm
-    public canReduce(): boolean {
-        return this.isIdentity() || this.canReduceChildren()
-    }
-    private canReduceChildren(): boolean {
-        return (this.terms.array.some(term => term.actualTerm.canReduce() || Object.getPrototypeOf(term.actualTerm) === Object.getPrototypeOf(this)));
-    }
-
-    public reduce(): Term {
-        if (this.canReduceChildren()) {
-            return this.reduceChildren();
-        }
-        else return this.reduceIdentity()
-    }
-
-    private reduceChildren() {
-        let result: AbelianTermItem[] = [];
-        for (const term of this.terms.array) {
-            const reduced = term.actualTerm.reduce();
-            if (Object.getPrototypeOf(reduced) === Object.getPrototypeOf(this)) {
-                for (const subterm of (reduced as AbelianTerm).terms.array) {
-                    result.push(new AbelianTermItem(term.constantModifier * subterm.constantModifier, subterm.actualTerm));
-                }
-            }
-            else {
-                result.push(term);
-            }
-        }
-        return this.createNew(result).reduceIdentity();
-    }
-
-    private isIdentity(): boolean {
-        return (this.terms.array.length == 1 && this.terms.array[0].constantModifier == 1);
-    }
-
-    private reduceIdentity(): Term {
-        if (this.isIdentity()) {
-            return this.terms.array[0].actualTerm.reduce();
-        }
-        else return this
-    }
 }
 
 class AbelianTermItem {

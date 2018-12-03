@@ -1,4 +1,5 @@
 class Product extends AbelianTerm{
+    protected additionalReductions: Reduction[] = []
     public operationSymbol = "&#8729;" // this is the unicode cdot
     public neutralElement = 1
     public toStringWithModifier(item: AbelianTermItem): string {

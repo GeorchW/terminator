@@ -16,7 +16,7 @@ class MathSymbol extends Term {
     public toClickable(context: EquationContext): JQuery<HTMLElement> {
         return $("<span/>").append(this.name)
     }
-    public canReduce(): boolean {
+    public checkReducable(): boolean {
         return false
     }
     public reduce(): Term {
