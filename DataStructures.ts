@@ -21,7 +21,7 @@ class OrderedFrozenSet<T extends IHashable> implements IHashable {
                 if (otherList.length != list.length)
                     return false
                 for (const item of list)
-                    if (!otherList.some(otherItem => otherItem == item))
+                    if (!otherList.some(otherItem => otherItem.equals(item)))
                         return false
             }
             return true

@@ -15,6 +15,8 @@ function clickable(
         .on("click", handler)
 }
 
+let context:EquationContext;
+
 function onStart() {
     let equation = new Equation(
         new Sum(
@@ -53,7 +55,7 @@ function onStart() {
         constructor(private equationArea: JQuery<HTMLElement>) { }
     }
 
-    let context = new DefaultEquationContext($("#equationArea").empty())
+    context = new DefaultEquationContext($("#equationArea").empty())
     context.addNewEquation(equation)
     //document.body.innerHTML = equation.toClickableHtml()
 }
