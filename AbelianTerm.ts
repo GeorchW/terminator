@@ -1,38 +1,4 @@
-abstract class Term implements IHashable {
-    abstract hash: number;
-    abstract equals(other: any): boolean;
-    public reduce(): Term {
-        let result: Term = this
-        let lastResult: Term
-        let appliedReductions = 0
-        do {
-            lastResult = result
-            for (const reduction of this.reductions) {
-                result = reduction(result)
-                if (result != lastResult) {
-                    console.log("Successfully applied reduction " + reduction)
-                    console.log("Old => new:", lastResult.toString(), result.toString())
-                    console.log("Old => new:", [lastResult, result])
-                    appliedReductions++
-                    break
-                }
-            }
-            if (appliedReductions > 20) {
-                console.log("Too many reductions; breaking.", appliedReductions)
-                break
-            }
-        }
-        while (result != lastResult)
-        return result
-    }
-    protected reductions: Reduction[] = []
-    public abstract toClickable(context: EquationContext): JQuery<HTMLElement>
-}
-
-interface Reduction {
-    (term: Term): Term
-}
-
+/// <reference path="Term.ts" />
 // Common base class for Sum and Product.
 abstract class AbelianTerm extends Term {
     public static readonly abelianReductions = [
@@ -67,33 +33,36 @@ abstract class AbelianTerm extends Term {
     }
     public abstract readonly operationSymbol: string
     public abstract readonly neutralElement: number
-    public toStringWithoutModifier(item: AbelianTermItem): string {
-        return item.actualTerm.toString()
+    public toStringWithoutModifier(term: Term): string {
+        return term.toString()
     }
     public abstract toStringWithModifier(item: AbelianTermItem): string
     public itemToString(item: AbelianTermItem): string {
         if (item.constantModifier == 1)
-            return this.toStringWithoutModifier(item)
+            return this.toStringWithoutModifier(item.actualTerm)
         else
             return this.toStringWithModifier(item)
     }
     public toString(): string {
-        return "(" + this.terms.array.map(item => this.itemToString(item)).join(this.operationSymbol) + ")"
+        return this.terms.array.map(item => this.itemToString(item)).join(this.operationSymbol)
     }
     public toClickable(context: EquationContext): JQuery<HTMLElement> {
         let result = $("<span/>")
         if (this.terms.array.length == 0)
             result.append(this.neutralElement.toString())
         else
+        {
+            let isFirst = true
             for (const term of this.terms.array) {
-                result.append(this.operationSymbol)
+                if(isFirst) isFirst = false
+                else result.append(this.operationSymbol)
                 result.append(clickable(this.itemToString(term), () => {
                     if (context.currentEquation == undefined) return
                     const newEquation = context.currentEquation.apply(this.getInverter(term))
                     context.addNewEquation(newEquation)
                 }))
             }
-        //result.prepend("(").append(")")
+        }
         return result
     }
     public getInverter(termItem: AbelianTermItem): TermTransformer {
