@@ -7,12 +7,12 @@ abstract class Term implements IHashable {
         let appliedReductions = 0;
         do {
             lastResult = result;
-            for (const reduction of this.reductions) {
+            for (const reduction of result.reductions) {
                 result = reduction(result);
                 if (result != lastResult) {
                     console.log("Successfully applied reduction " + reduction);
                     console.log("Old => new:", lastResult.toString(), result.toString());
-                    console.log("Old => new:", [lastResult, result]);
+                    console.log("Old => new:", lastResult, result);
                     appliedReductions++;
                     break;
                 }
@@ -30,7 +30,7 @@ abstract class Term implements IHashable {
         if (typeof result == "string")
             return result
         else
-            return result.get(0).outerHTML
+            return result.text()
     }
     public abstract toDisplayable(params: DisplayParams): JQuery<HTMLElement>;
 }
