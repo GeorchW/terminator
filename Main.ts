@@ -30,7 +30,7 @@ function onStart() {
     class DefaultEquationContext implements EquationContext {
         currentEquation: Equation | undefined;
         addNewEquation(equation: Equation): void {
-            const html = equation.toClickableHtml(this);
+            const html = equation.toClickableHtml(this).contents();
             this.equationArea.append(html)
             this.currentEquation = equation
             console.log(this.currentEquation)

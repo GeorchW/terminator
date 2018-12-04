@@ -2,16 +2,24 @@ body{
     font-size: 40px;
 }
 
-#equation {
+#equationArea{
     display: grid;
-    place-items: start;
-    justify-content: start;
-    text-align:center;
+    place-items:start;
+    width: fit-content;
+    width: -moz-fit-content;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 300;
 }
 
-.math, .math * {
-    grid-row: 1;
-} 
+.equation-left{
+    grid-column: 1
+}
+.equation-equals{
+    grid-column: 2
+}
+.equation-right{
+    grid-column: 3
+}
 
 #sum{
     display: inline-block;
