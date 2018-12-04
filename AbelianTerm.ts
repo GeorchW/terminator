@@ -31,46 +31,7 @@ abstract class AbelianTerm extends Term {
                 .filter(summand => summand.constantModifier != 0));
         this.hash = this.terms.hash;
     }
-    public abstract readonly operationSymbol: string
-    public get operationSymbolHtml(): JQuery<HTMLElement> | string{
-        return this.operationSymbol
-    }
     public abstract readonly neutralElement: number
-    public requiresOperationSymbol(item:AbelianTermItem){
-        return true
-    }
-    public toDisplayableWithoutModifier(term: Term, params:DisplayParams): JQuery<HTMLElement> | string {
-        return term.toDisplayable(params)
-    }
-    public abstract toDisplayableWithModifier(item: AbelianTermItem, params:DisplayParams): JQuery<HTMLElement> | string
-    public itemToDisplayable(item: AbelianTermItem, params:DisplayParams): JQuery<HTMLElement> | string {
-        if (item.constantModifier == 1)
-            return this.toDisplayableWithoutModifier(item.actualTerm, params)
-        else
-            return this.toDisplayableWithModifier(item, params)
-    }
-    public toDisplayable(params:DisplayParams): JQuery<HTMLElement> {
-        let result = $("<span/>")
-        if (this.terms.array.length == 0)
-            result.append(this.neutralElement.toString())
-        else
-        {
-            let isFirst = true
-            for (const term of this.terms.array) {
-                if(isFirst) isFirst = false
-                else if (this.requiresOperationSymbol(term))
-                    result.append(params.preferString ? this.operationSymbol : this.operationSymbolHtml)
-                if (params.clickable)
-                    result.append(clickable(this.itemToDisplayable(term, params.unclickable()), () => {
-                        if (context.currentEquation == undefined) return
-                        const newEquation = context.currentEquation.apply(this.getInverter(term))
-                        context.addNewEquation(newEquation)
-                    }))
-                else result.append(this.itemToDisplayable(term, params))
-            }
-        }
-        return result
-    }
     public getInverter(termItem: AbelianTermItem): TermTransformer {
         return term => {
             const newTerm = this.createNew([term, new AbelianTermItem(-1 * termItem.constantModifier, termItem.actualTerm)])

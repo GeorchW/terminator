@@ -3,18 +3,24 @@ class Product extends AbelianTerm {
     public operationSymbol = "*"
     public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1
-    public toDisplayableWithoutModifier(term: Term, params: DisplayParams): string | JQuery<HTMLElement> {
+    private toDisplayableWithoutModifier(term: Term, params: DisplayParams): string | JQuery<HTMLElement> {
         if (term instanceof Sum) {
             return $("<span/>").append("(", term.toDisplayable(params), ")")
         }
-        return super.toDisplayableWithoutModifier(term, params)
+        return term.toDisplayable(params)
     }
-    public toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams): string | JQuery<HTMLElement> {
+    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams): string | JQuery<HTMLElement> {
         const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params)
         if (params.preferString)
             return $("<span/>").append(baseTerm, "^", item.constantModifier.toString())
         else
             return $("<span/>").append(baseTerm, $("<sup/>").append(item.constantModifier.toString()))
+    }
+    private itemToDisplayable(item: AbelianTermItem, params:DisplayParams): JQuery<HTMLElement> | string {
+        if (item.constantModifier == 1)
+            return this.toDisplayableWithoutModifier(item.actualTerm, params)
+        else
+            return this.toDisplayableWithModifier(item, params)
     }
     public toDisplayable(params:DisplayParams): JQuery<HTMLElement> {
         let result = $("<span/>").attr("class", "product")
@@ -27,8 +33,7 @@ class Product extends AbelianTerm {
             for (const term of this.terms.array) {
                 const target = term.constantModifier > 0 ? targetDividend : targetDivisor
                 if(target.empty) target.empty = false
-                else if (this.requiresOperationSymbol(term))
-                    target.target.append(params.preferString ? this.operationSymbol : this.operationSymbolHtml)
+                else target.target.append(params.preferString ? this.operationSymbol : this.operationSymbolHtml)
                 if (params.clickable)
                     target.target.append(
                         clickable(
