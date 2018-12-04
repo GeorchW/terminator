@@ -25,6 +25,10 @@ body{
     grid-row: 2;
 }
 
+sup {
+    font-size: 0.6em
+}
+
 .clickable:hover {
     background-color: rgb(250, 250, 250);
     text-shadow: lightblue 1px 3px 5px;

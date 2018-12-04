@@ -49,7 +49,7 @@ abstract class AbelianTerm extends Term {
         else
             return this.toDisplayableWithModifier(item, params)
     }
-    public toDisplayable(params:DisplayParams): JQuery<HTMLElement> | string {
+    public toDisplayable(params:DisplayParams): JQuery<HTMLElement> {
         let result = $("<span/>")
         if (this.terms.array.length == 0)
             result.append(this.neutralElement.toString())
@@ -60,11 +60,13 @@ abstract class AbelianTerm extends Term {
                 if(isFirst) isFirst = false
                 else if (this.requiresOperationSymbol(term))
                     result.append(params.preferString ? this.operationSymbol : this.operationSymbolHtml)
-                result.append(clickable(this.itemToDisplayable(term, params.unclickable()), () => {
-                    if (context.currentEquation == undefined) return
-                    const newEquation = context.currentEquation.apply(this.getInverter(term))
-                    context.addNewEquation(newEquation)
-                }))
+                if (params.clickable)
+                    result.append(clickable(this.itemToDisplayable(term, params.unclickable()), () => {
+                        if (context.currentEquation == undefined) return
+                        const newEquation = context.currentEquation.apply(this.getInverter(term))
+                        context.addNewEquation(newEquation)
+                    }))
+                else result.append(this.itemToDisplayable(term, params))
             }
         }
         return result

@@ -32,7 +32,7 @@ abstract class Term implements IHashable {
         else
             return result.get(0).outerHTML
     }
-    public abstract toDisplayable(params: DisplayParams): JQuery<HTMLElement> | string;
+    public abstract toDisplayable(params: DisplayParams): JQuery<HTMLElement>;
 }
 
 interface Reduction {

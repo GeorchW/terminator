@@ -10,8 +10,8 @@ class MathSymbol extends Term {
         super()
         this.hash = stringHash(name);
     }
-    public toDisplayable(): string {
-        return this.name
+    public toDisplayable(): JQuery<HTMLElement> {
+        return $("<span/>").append(this.name);
     }
     public checkReducable(): boolean {
         return false

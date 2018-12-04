@@ -4,7 +4,7 @@ class Constant extends Term {
     equals(other: any): boolean {
         return other instanceof Constant && this.value == other.value;
     }
-    public toDisplayable(): string {
-        return this.value.toString();
+    public toDisplayable(): JQuery<HTMLElement> {
+        return $("<span/>").append(this.value.toString());
     }
 }
