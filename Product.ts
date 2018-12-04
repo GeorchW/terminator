@@ -1,5 +1,5 @@
 class Product extends AbelianTerm {
-    protected additionalReductions: Reduction[] = []
+    reductions = AbelianTerm.abelianReductions.concat([moveConstantFactorToFront])
     public operationSymbol = "*"
     public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1

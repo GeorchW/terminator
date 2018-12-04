@@ -1,5 +1,5 @@
 class Sum extends AbelianTerm {
-    reductions = AbelianTerm.abelianReductions.concat([replaceProductConstantsBySummandModifiers, replaceLonelySumWithProduct])
+    reductions = AbelianTerm.abelianReductions.concat([replaceProductConstantsBySummandModifiers, replaceLonelySumWithProduct, moveConstantSummandsToBack])
     public operationSymbol = "+"
     public neutralElement = 0
     private toDisplayableWithModifier(item: AbelianTermItem, params:DisplayParams): JQuery<HTMLElement> {
