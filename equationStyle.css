@@ -4,18 +4,25 @@ body{
 
 #equationArea{
     display: grid;
-    place-items:start;
+    place-items:center;
+    text-align:center;
     width: fit-content;
     width: -moz-fit-content;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 300;
 }
 
+.equation-left, .equation-equals, .equation-right{
+    margin-top:0.25em;
+    margin-bottom:0.25em;
+}
+
 .equation-left{
     grid-column: 1
 }
 .equation-equals{
-    grid-column: 2
+    grid-column: 2;
+    text-justify: center;
 }
 .equation-right{
     grid-column: 3
@@ -35,6 +42,10 @@ body{
 
 sup {
     font-size: 0.6em
+}
+
+hr {
+    margin: 0 0 0 0;
 }
 
 .clickable:hover {
