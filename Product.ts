@@ -1,5 +1,5 @@
 class Product extends AbelianTerm {
-    reductions = AbelianTerm.abelianReductions.concat([moveConstantFactorToFront])
+    reductions = AbelianTerm.abelianReductions.concat([moveConstantFactorToFront, unifyConstantFactors])
     public operationSymbol = "*"
     public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1
@@ -51,7 +51,10 @@ class Product extends AbelianTerm {
             if(targetDivisor.empty) result.append(targetDividend.target)
             else {
                 if(targetDividend.empty) targetDividend.target.append("1")
-                result.append(targetDividend.target, $("<hr/>"), targetDivisor.target)
+                if(params.preferString)
+                    result.append(targetDividend.target, " / (", targetDivisor.target, ")")
+                else
+                    result.append(targetDividend.target, $("<hr/>"), targetDivisor.target)
             }
             
         }

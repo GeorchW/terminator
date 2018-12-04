@@ -12,7 +12,7 @@ function onStart() {
                     new AbelianTermItem(-1,
                         new Product([
                             new MathSymbol("a"),
-                            new Constant(5),
+                            new Constant(4),
                             new MathSymbol("b")]))
             ]).reduce(),
         new Sum(
