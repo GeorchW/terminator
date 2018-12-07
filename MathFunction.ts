@@ -43,6 +43,7 @@ class SimpleInverseMathFunction extends MathFunction {
 }
 
 class MathFunctionInstance extends Term {
+    reductions = [removeInvertedFuctions]
     hash: number;
     constructor(public _function: MathFunction, public innerTerm: Term) {
         super()
@@ -57,7 +58,7 @@ class MathFunctionInstance extends Term {
         if (params.clickable) {
             result = clickable(result, () => {
                 if (context.currentEquation != undefined) {
-                    const newEquation = context.currentEquation.apply(term => new MathFunctionInstance(this._function.inverse, term))
+                    const newEquation = context.currentEquation.apply(term => new MathFunctionInstance(this._function.inverse, term).reduce())
                     context.addNewEquation(newEquation)
                 }
             })
