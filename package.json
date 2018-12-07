@@ -12,5 +12,8 @@
     "@types/jasmine": "^3.3.1",
     "@types/jquery": "^3.3.23",
     "typescript": "^3.2.1"
+  },
+  "scripts": {
+    "build": "tsc"
   }
 }
