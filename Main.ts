@@ -1,4 +1,4 @@
-let context:EquationContext;
+let context: EquationContext;
 
 function onStart() {
     let equation = new Equation(
@@ -9,19 +9,20 @@ function onStart() {
                         new MathSymbol("a"),
                         new Constant(5),
                         new MathSymbol("c")])),
-                    new AbelianTermItem(-1,
-                        new Product([
-                            new MathSymbol("a"),
-                            new Constant(4),
-                            new MathSymbol("b")]))
-            ]).reduce(),
-        new Sum(
-            [
-                new AbelianTermItem(1,
+                new AbelianTermItem(-1,
                     new Product([
                         new MathSymbol("a"),
-                        new MathSymbol("c")]))
+                        new Constant(4),
+                        new MathSymbol("b")]))
             ]).reduce(),
+        new MathFunctionInstance(new SimpleMathFunction("sin"),
+            new Sum(
+                [
+                    new AbelianTermItem(1,
+                        new Product([
+                            new MathSymbol("a"),
+                            new MathSymbol("c")]))
+                ])).reduce(),
     )
     // const reduceTest = new Sum([equation.left, equation.left]).reduce();
     // console.log(reduceTest.toString(), reduceTest)
