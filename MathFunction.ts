@@ -65,6 +65,6 @@ class MathFunctionInstance extends Term {
         }
         return result
             .append(this._function.toDisplayable(params))
-            .append(this.innerTerm.toDisplayable(params.unclickable()))
+            .append(this.innerTerm.toDisplayable(params.unclickable()).prepend("(").append(")"))
     }
 }
