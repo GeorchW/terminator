@@ -1,0 +1,16 @@
+{
+  "name": "terminator",
+  "version": "0.0.1",
+  "description": "A tool to end all suffering when doing term transformations",
+  "repository": {
+    "type": "git",
+    "url": "https://git.wcke.de/Georch/Terminator.git"
+  },
+  "author": "Georg Wicke",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@types/jasmine": "^3.3.1",
+    "@types/jquery": "^3.3.23",
+    "typescript": "^3.2.1"
+  }
+}
