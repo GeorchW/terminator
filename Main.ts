@@ -1,4 +1,4 @@
-let context:EquationContext;
+let context: EquationContext;
 
 function onStart() {
     let equation = new Equation(
@@ -9,11 +9,11 @@ function onStart() {
                         new MathSymbol("a"),
                         new Constant(5),
                         new MathSymbol("c")])),
-                    new AbelianTermItem(-1,
-                        new Product([
-                            new MathSymbol("a"),
-                            new Constant(4),
-                            new MathSymbol("b")]))
+                new AbelianTermItem(-1,
+                    new Product([
+                        new MathSymbol("a"),
+                        new Constant(4),
+                        new MathSymbol("b")]))
             ]).reduce(),
         new Sum(
             [
@@ -40,5 +40,24 @@ function onStart() {
 
     context = new DefaultEquationContext($("#equationArea").empty())
     context.addNewEquation(equation)
+
+    const scratchpad = $("#equationScratchpad")
+    const input = $("#equationInput")
+
+    console.log(scratchpad, input)
+
+    input.on("input", () => {
+        const val = input.val()
+        if (val != undefined) {
+            const parsed = parse(val.toString())
+            if (parsed != undefined) {
+                scratchpad.empty().append(parsed.toClickableHtml(context))
+            }
+            else {
+                scratchpad.empty().append("error")
+            }
+        }
+    })
     //document.body.innerHTML = equation.toClickableHtml()
 }
+

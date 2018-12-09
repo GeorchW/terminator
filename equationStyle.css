@@ -53,3 +53,14 @@ hr {
     text-shadow: lightblue 1px 3px 5px;
     cursor: pointer;
 }
+
+#equationInput {
+    width: fit-content;
+    width: -moz-fit-content;
+    border-width: 1px;
+    padding: 0.5em;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 20px;
+    border-color: gray;
+    border-style: solid;
+}

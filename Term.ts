@@ -10,9 +10,9 @@ abstract class Term implements IHashable {
             for (const reduction of result.reductions) {
                 result = reduction(result);
                 if (result != lastResult) {
-                    console.log("Successfully applied reduction " + reduction.name);
-                    console.log("Old => new:", lastResult.toString(), result.toString());
-                    console.log("Old => new:", lastResult, result);
+                    // console.log("Successfully applied reduction " + reduction.name);
+                    // console.log("Old => new:", lastResult.toString(), result.toString());
+                    // console.log("Old => new:", lastResult, result);
                     appliedReductions++;
                     break;
                 }
