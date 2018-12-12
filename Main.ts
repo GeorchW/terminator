@@ -41,5 +41,27 @@ function onStart() {
 
     context = new DefaultEquationContext($("#equationArea").empty())
     context.addNewEquation(equation)
+
+    const scratchpad = $("#equationScratchpad")
+    const input = $("#equationInput")
+
+    console.log(scratchpad, input)
+
+    var parsed : Equation | undefined;
+
+    input.on("input", () => {
+        const val = input.val()
+        if (val != undefined) {
+            parsed = parse(val.toString())
+            if (parsed != undefined) {
+                scratchpad.empty().append(parsed.toClickableHtml(context))
+            }
+            else {
+                scratchpad.empty().append("error")
+            }
+        }
+    })
+    $("#sendToConsoleButton").on("click", () => console.log(parsed))
     //document.body.innerHTML = equation.toClickableHtml()
 }
+
