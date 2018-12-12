@@ -1,6 +1,6 @@
 let context: EquationContext;
 
-function onStart() {
+function onStart() {    
     let equation = new Equation(
         new Sum(
             [
@@ -29,18 +29,31 @@ function onStart() {
     console.log(equation)
 
     class DefaultEquationContext implements EquationContext {
-        currentEquation: Equation | undefined;
+        public get currentEquation(): Equation | undefined {
+            const result = this.oldEquations[this.oldEquations.length - 1]
+            if (result == undefined) return undefined
+            else return result[0];
+        }
+        private oldEquations: Array<[Equation, JQuery<HTMLElement>]> = []
         addNewEquation(equation: Equation): void {
             scrollTo(this.equationArea.children().last())
-            const html = equation.toClickableHtml(this).contents();
+            const html = equation.toClickableHtml(this).children();
             this.equationArea.append(html)
-            this.currentEquation = equation
+            this.oldEquations.push([equation, html])
             console.log(this.currentEquation)
+        }
+        public undo() {
+            const element = this.oldEquations.pop()
+            if (element == undefined) return
+            else {
+                var [, html] = element;
+                html.remove()
+            }
         }
         constructor(private equationArea: JQuery<HTMLElement>) { }
     }
 
-    context = new DefaultEquationContext($("#equationArea").empty())
+    var localContext = context = new DefaultEquationContext($("#equationArea").empty())
     context.addNewEquation(equation)
 
     const scratchpad = $("#equationScratchpad")
@@ -48,7 +61,7 @@ function onStart() {
 
     console.log(scratchpad, input)
 
-    var parsed : Equation | undefined;
+    var parsed: Equation | undefined;
 
     input.on("input", () => {
         const val = input.val()
@@ -62,7 +75,24 @@ function onStart() {
             }
         }
     })
-    $("#sendToConsoleButton").on("click", () => console.log(parsed))
-    //document.body.innerHTML = equation.toClickableHtml()
+    
+    $("#copyArea #copyAreaCopyButton").on("click", () => {
+        $("#copyArea #copyAreaText").focus().select()
+        document.execCommand("copy")
+    })
+
+
+    $("#sendToConsoleButton").on("click", () => console.log(context.currentEquation))
+    $("#convertToTextButton").on("click", (e) => {
+        const text = context.currentEquation == undefined ? "undefined" : context.currentEquation.toString()
+        $("#copyArea").addClass("autoHideVisible")
+        const node = $("#copyArea #copyAreaText")
+        node.attr("value", text)
+        node.focus().select()
+        document.execCommand("copy")
+        e.stopPropagation()
+    })
+    $("#undoButton").on("click", () => localContext.undo())
+    $("body").on("click", () => {$(".autoHideVisible:not(:hover)").removeClass("autoHideVisible")})
 }
 
