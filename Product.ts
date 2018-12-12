@@ -48,6 +48,7 @@ class Product extends AbelianTerm {
             }
             if (targetDivisor.empty) result.append(targetDividend.target)
             else {
+                result.addClass("fraction")
                 if (targetDividend.empty) targetDividend.target.append("1")
                 if (params.preferString)
                     result.append(targetDividend.target, " / (", targetDivisor.target, ")")
