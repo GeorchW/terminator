@@ -33,7 +33,7 @@ function parse(text: string): Equation | undefined {
         do {
             chars.push(state.currentChar);
             state.consumeChar();
-        } while (isLetter(state.currentChar));
+        } while (matcher(state.currentChar));
         return chars.join("");
     }
     function parseAbelian(left: Term | undefined, state: ParserState, neutralElement: number, minusOrDivide: string): (AbelianTermItem | Term)[] {
@@ -103,7 +103,9 @@ function parse(text: string): Equation | undefined {
                         left = new MathSymbol(string);
                     }
                     else if (isDigit(state.currentChar)) {
-                        left = new Constant(parseInt(consumeToken(state, isDigit)));
+                        const string = consumeToken(state, isDigit);
+                        console.log("parsing as int", string)
+                        left = new Constant(parseInt(string));
                     }
                     else {
                         state.consumeChar();
