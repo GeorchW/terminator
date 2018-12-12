@@ -46,10 +46,12 @@ function onStart() {
 
     console.log(scratchpad, input)
 
+    var parsed : Equation | undefined;
+
     input.on("input", () => {
         const val = input.val()
         if (val != undefined) {
-            const parsed = parse(val.toString())
+            parsed = parse(val.toString())
             if (parsed != undefined) {
                 scratchpad.empty().append(parsed.toClickableHtml(context))
             }
@@ -58,6 +60,7 @@ function onStart() {
             }
         }
     })
+    $("#sendToConsoleButton").on("click", () => console.log(parsed))
     //document.body.innerHTML = equation.toClickableHtml()
 }
 

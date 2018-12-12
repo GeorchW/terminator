@@ -64,3 +64,19 @@ hr {
     border-color: gray;
     border-style: solid;
 }
+
+.product{
+    display: inline-block;
+    vertical-align: middle;
+    transform: translateY(-0.1em);
+    margin-left: 0.1em;
+    text-align: center;
+}
+
+#sendToConsoleButton{
+    font-size: 0.5em;
+}
+#sendToConsoleButton:hover{
+    text-decoration-line: underline;
+    cursor: pointer;
+}
