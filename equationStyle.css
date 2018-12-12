@@ -1,5 +1,7 @@
 body{
     font-size: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 300;
 }
 
 #equationArea{
@@ -8,8 +10,6 @@ body{
     text-align:center;
     width: fit-content;
     width: -moz-fit-content;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-weight: 300;
 }
 
 .equation-left, .equation-equals, .equation-right{
@@ -55,8 +55,8 @@ hr {
 }
 
 #equationInput {
-    width: fit-content;
-    width: -moz-fit-content;
+    width: 95%;
+    overflow: hidden;
     border-width: 1px;
     padding: 0.5em;
     font-family: 'Courier New', Courier, monospace;
@@ -65,7 +65,7 @@ hr {
     border-style: solid;
 }
 
-.product{
+.fraction{
     display: inline-block;
     vertical-align: middle;
     transform: translateY(-0.1em);
@@ -73,10 +73,45 @@ hr {
     text-align: center;
 }
 
-#sendToConsoleButton{
+#equationButtons{
+    font-size: 0.5em;
+    text-anchor: middle;
+}
+.equationButton {
+    text-decoration: none;
+    position: relative;
+    /* display: block; */
+}
+.equationButton .text{
+    grid-column: 2;
+    font-size: 0.8em;
+    color:gray;
+    display: none;
+    position: absolute;
+    left:0; top:100%;
+    width: 300px;
+}
+.equationButton:hover .text{
+    display:block;
+}
+#mainArea{
+    margin-bottom:100%;
+}
+#copyArea{
+    display: none;
+    border-width: 2px;
+    border-radius: 5px;
+    border-spacing: 5px;
+}
+#copyArea.autoHideVisible {
+    display: block;
+}
+#copyArea #copyAreaText{
+    font-family: 'Courier New', Courier, monospace;
     font-size: 0.5em;
 }
-#sendToConsoleButton:hover{
-    text-decoration-line: underline;
-    cursor: pointer;
+#copyArea #copyAreaCopyButton{
+    content: "📋 copy";
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.8em;
 }

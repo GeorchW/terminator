@@ -29,8 +29,25 @@
     <body>
         <div id="mainArea">
             <input id="equationInput"/>
-            <div id="equationScratchpad"></div><a id="sendToConsoleButton">📝<small>send to console</small></a>
-            <div id="equationArea">not changed</div>
+            <div id="equationArea">JavaScript doesn't seem to work :-( is something wrong with your browser?</div>
+            <div id="equationButtons">
+                <a id="sendToConsoleButton" class="equationButton" href="javascript:; //send to console">
+                    <span class="icon">🐞</span>
+                    <span class="text">send to console</span>
+                </a>
+                <a id="convertToTextButton" class="equationButton" href="javascript:; //convert to text">
+                    <span class="icon">📝</span>
+                    <span class="text">convert to text</span>
+                </a>
+                <a id="undoButton" class="equationButton" href="javascript:; //undo">
+                    <span class="icon"><!--❌-->⎌</span>
+                    <span class="text">undo</span>
+                </a>
+            </div>
+            <div id="copyArea">
+                <input id="copyAreaText" type="text"/>
+                <div id="copyAreaCopyButton">📋 copy</div>
+            </div>
         </div>
         <script>onStart();</script>
     </body>
