@@ -1,42 +1,25 @@
 let context: EquationContext;
 
-function onStart() {    
-    let equation = new Equation(
-        new Sum(
-            [
-                new AbelianTermItem(3,
-                    new Product([
-                        new MathSymbol("a"),
-                        new Constant(5),
-                        new MathSymbol("c")])),
-                new AbelianTermItem(-1,
-                    new Product([
-                        new MathSymbol("a"),
-                        new Constant(4),
-                        new MathSymbol("b")]))
-            ]).reduce(),
-        new MathFunctionInstance(new SimpleMathFunction("sin"),
-            new Sum(
-                [
-                    new AbelianTermItem(1,
-                        new Product([
-                            new MathSymbol("a"),
-                            new MathSymbol("c")]))
-                ])).reduce(),
-    )
-    // const reduceTest = new Sum([equation.left, equation.left]).reduce();
-    // console.log(reduceTest.toString(), reduceTest)
-    console.log(equation)
+function onStart() {
+    var useParsed = false;
+    var parsed: Equation | undefined;
+    const equationArea = $("#equationArea")
+    const input = $("#equationInput")
 
     class DefaultEquationContext implements EquationContext {
         public get currentEquation(): Equation | undefined {
+            if (!useParsed) return parsed
             const result = this.oldEquations[this.oldEquations.length - 1]
             if (result == undefined) return undefined
             else return result[0];
         }
         private oldEquations: Array<[Equation, JQuery<HTMLElement>]> = []
         addNewEquation(equation: Equation): void {
-            scrollTo(this.equationArea.children().last())
+            if(!useParsed) {
+                useParsed = true;
+                input.remove()
+            }
+            scrollToElement(this.equationArea.children().last())
             const html = equation.toClickableHtml(this).children();
             this.equationArea.append(html)
             this.oldEquations.push([equation, html])
@@ -53,25 +36,21 @@ function onStart() {
         constructor(private equationArea: JQuery<HTMLElement>) { }
     }
 
-    var localContext = context = new DefaultEquationContext($("#equationArea").empty())
-    context.addNewEquation(equation)
+    var localContext = context = new DefaultEquationContext(equationArea.empty())
 
-    const scratchpad = $("#equationScratchpad")
-    const input = $("#equationInput")
 
-    console.log(scratchpad, input)
+    console.log(equationArea, input)
 
-    var parsed: Equation | undefined;
 
     input.on("input", () => {
         const val = input.val()
         if (val != undefined) {
             parsed = parse(val.toString())
             if (parsed != undefined) {
-                scratchpad.empty().append(parsed.toClickableHtml(context))
+                equationArea.empty().append(parsed.toClickableHtml(context).children())
             }
             else {
-                scratchpad.empty().append("error")
+                equationArea.empty().append("error")
             }
         }
     })

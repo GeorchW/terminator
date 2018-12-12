@@ -6,7 +6,7 @@ function clickable(content: string | JQuery<HTMLElement>, handler: JQuery.EventH
         .on("click", handler);
 }
 
-function scrollTo(element: JQuery<HTMLElement>, speed: number | string = "fast") {
+function scrollToElement(element: JQuery<HTMLElement>, speed: number | string = "fast") {
     const offset = element.offset()
     if (offset != undefined)
         $("html, body").animate({ scrollTop: offset.top }, speed);
