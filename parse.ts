@@ -1,3 +1,12 @@
+describe("parse", () => {
+    it("should parse x*(a+c)+b=1 correctly", () => {
+        const parsed = parse("x*(a+c)+b=1")
+        expect(parsed).not.toBeUndefined()
+        if (parsed == undefined) { return }
+        if (!(parsed.left instanceof Sum)) { fail("Expected a sum"); return }
+    })
+})
+
 function parse(text: string): Equation | undefined {
     class ParserState {
         private currentPos: number;
@@ -27,7 +36,7 @@ function parse(text: string): Equation | undefined {
         } while (isLetter(state.currentChar));
         return chars.join("");
     }
-    function parseAbelian(left: Term | undefined, state: ParserState, neutralElement:number, minusOrDivide:string) : (AbelianTermItem | Term)[]{
+    function parseAbelian(left: Term | undefined, state: ParserState, neutralElement: number, minusOrDivide: string): (AbelianTermItem | Term)[] {
         const opChar = state.currentChar;
         state.consumeChar();
         var leftTerm = left == undefined ? new Constant(neutralElement) : left;
@@ -44,6 +53,13 @@ function parse(text: string): Equation | undefined {
     }
     function parseProduct(left: Term | undefined, state: ParserState): Product {
         return new Product(parseAbelian(left, state, 1, "/"))
+    }
+    function parseBrackets(state: ParserState): Term | undefined {
+        state.consumeChar();
+        const result = parseTerm(state, 0);
+        if (state.currentChar == ")")
+            state.consumeChar()
+        return result
     }
     function getPrecedence(operator: string) {
         switch (operator) {
@@ -65,7 +81,6 @@ function parse(text: string): Equation | undefined {
                 continue;
             }
             if (state.currentChar == ")") {
-                state.consumeChar();
                 return left;
             }
             if (returnPrecedence >= getPrecedence(state.currentChar))
@@ -80,8 +95,7 @@ function parse(text: string): Equation | undefined {
                     left = parseProduct(left, state);
                     break;
                 case "(":
-                    state.consumeChar();
-                    left = parseTerm(state, 0);
+                    left = parseBrackets(state);
                     break;
                 default:
                     if (isLetter(state.currentChar)) {
