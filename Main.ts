@@ -15,13 +15,14 @@ function onStart() {
                         new Constant(4),
                         new MathSymbol("b")]))
             ]).reduce(),
-        new Sum(
-            [
-                new AbelianTermItem(1,
-                    new Product([
-                        new MathSymbol("a"),
-                        new MathSymbol("c")]))
-            ]).reduce(),
+        new MathFunctionInstance(new SimpleMathFunction("sin"),
+            new Sum(
+                [
+                    new AbelianTermItem(1,
+                        new Product([
+                            new MathSymbol("a"),
+                            new MathSymbol("c")]))
+                ])).reduce(),
     )
     // const reduceTest = new Sum([equation.left, equation.left]).reduce();
     // console.log(reduceTest.toString(), reduceTest)
