@@ -31,6 +31,7 @@ function onStart() {
     class DefaultEquationContext implements EquationContext {
         currentEquation: Equation | undefined;
         addNewEquation(equation: Equation): void {
+            scrollTo(this.equationArea.children().last())
             const html = equation.toClickableHtml(this).contents();
             this.equationArea.append(html)
             this.currentEquation = equation

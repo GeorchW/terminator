@@ -76,7 +76,7 @@ hr {
 #sendToConsoleButton{
     font-size: 0.5em;
 }
-#sendToConsoleButton:hover{
-    text-decoration-line: underline;
-    cursor: pointer;
+}
+#equationArea{
+    margin-bottom:100%;
 }
