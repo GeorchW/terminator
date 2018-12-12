@@ -7,10 +7,16 @@ class Sum extends AbelianTerm {
     public operationSymbol = "+"
     public neutralElement = 0
     private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams): JQuery<HTMLElement> {
-        const modifierString = (Math.abs(item.constantModifier) == 1) ?
-            (item.constantModifier > 0 ? "+" : "-") :
-            (item.constantModifier.toString())
-        return $("<span/>").append(modifierString).append(item.actualTerm.toDisplayable(params))
+        var result = $("<span/>")
+        var displayModifierNumber = Math.abs(item.constantModifier) != 1
+        const modifierString = displayModifierNumber ?
+            item.constantModifier.toString():
+            (item.constantModifier > 0 ? "+" : "-")
+        result.append($("<span/>").append(modifierString))
+        if(displayModifierNumber)
+            result.append($("<span/>").append(params.preferString?"*":"&#8729;"))
+        result.append(item.actualTerm.toDisplayable(params))
+        return result
     }
     private requiresOperationSymbol(term: AbelianTermItem) {
         return term.constantModifier > 0

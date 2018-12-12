@@ -12,9 +12,9 @@ class Equation {
         return $("<div/>")
             .attr("id", "equation")
             .attr("class", "math")
-            .append(this.left.toDisplayable(params).attr("class", "equation-left"))
+            .append($("<span/>").append(this.left.toDisplayable(params)).attr("class", "equation-left"))
             .append($("<span/>").append("&nbsp;=&nbsp;").attr("class", "equation-equals"))
-            .append(this.right.toDisplayable(params).attr("class", "equation-right"));
+            .append($("<span/>").append(this.right.toDisplayable(params)).attr("class", "equation-right"));
     }
     public apply(transformer: TermTransformer): Equation {
         return new Equation(transformer(this.left), transformer(this.right));
