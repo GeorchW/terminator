@@ -1,5 +1,6 @@
 class Product extends AbelianTerm {
     reductions = AbelianTerm.abelianReductions.concat([moveConstantFactorToFront, unifyConstantFactors])
+    replacementRules = [new DistributiveProductReplacement()]
     public operationSymbol = "*"
     public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1
@@ -69,8 +70,8 @@ class Product extends AbelianTerm {
                         context.addNewEquation(newEquation)
                     }
                     result.append(clickable(
-                        product.itemToDisplayable(displayedTerm, params.unclickable(), terms.length > 1, product.getReplacer(displayedTerm, replaceSelf)),
-                        params.clickable ? onClick : false))
+                        product.itemToDisplayable(displayedTerm, params.untransformable(), terms.length > 1, product.getReplacer(displayedTerm, replaceSelf)),
+                        params.transformable ? onClick : false))
 
                     i += 1
                 }

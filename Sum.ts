@@ -45,7 +45,7 @@ class Sum extends AbelianTerm {
                     const newEquation = context.currentEquation.apply(this.getInverter(term))
                     context.addNewEquation(newEquation)
                 }
-                result.append(clickable(this.itemToDisplayable(term, params.unclickable(), this.getReplacer(term, replaceSelf)), params.clickable ? onClick : false))
+                result.append(clickable(this.itemToDisplayable(term, params.untransformable(), this.getReplacer(term, replaceSelf)), params.transformable ? onClick : false))
             }
         }
         return result

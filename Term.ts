@@ -24,15 +24,29 @@ abstract class Term implements IHashable {
         } while (result != lastResult);
         return result;
     }
-    protected reductions: Reduction[] = [];
+    protected replacementRules: TermReplacementRule[] = []
+    protected reductions: Reduction[] = []
     public toString(): string {
-        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, true), () => new Equation(new Constant(0), new Constant(0)))
+        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, false, true), () => new Equation(new Constant(0), new Constant(0)))
         if (typeof result == "string")
             return result
         else
             return result.text()
     }
-    public abstract toDisplayable(params: DisplayParams, replaceSelf:TermReplacer): JQuery<HTMLElement>;
+    public abstract toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement>;
+    public getReplacements(): Term[] {
+        const result = []
+        for (const rule of this.replacementRules) {
+            result.push(...rule.getReplacements(this))
+        }
+        return result
+    }
+}
+
+abstract class TermReplacementRule {
+    public abstract get name(): string
+    public abstract get examples(): string[]
+    public abstract getReplacements(term: Term): Term[]
 }
 
 interface Reduction {
@@ -41,10 +55,11 @@ interface Reduction {
 
 class DisplayParams {
     constructor(
-        public context:EquationContext, 
-        public clickable:boolean, 
-        public preferString:boolean){}
-    unclickable(): DisplayParams {
-        return new DisplayParams(this.context, false, this.preferString)
+        public context: EquationContext,
+        public transformable: boolean,
+        public replaceable: boolean,
+        public preferString: boolean) { }
+    untransformable(): DisplayParams {
+        return new DisplayParams(this.context, false, this.replaceable, this.preferString)
     }
 }

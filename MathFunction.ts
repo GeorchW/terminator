@@ -55,7 +55,7 @@ class MathFunctionInstance extends Term {
     public toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> {
         var result = $("<span/>")
         var context = params.context
-        if (params.clickable) {
+        if (params.transformable) {
             result = clickable(result, () => {
                 if (context.currentEquation != undefined) {
                     const newEquation = context.currentEquation.apply(term => new MathFunctionInstance(this._function.inverse, term).reduce())
@@ -68,7 +68,7 @@ class MathFunctionInstance extends Term {
             .append(this._function.toDisplayable(params))
             .append(
                 this.innerTerm.toDisplayable(
-                    params.unclickable(),
+                    params.untransformable(),
                     term => replaceSelf(new MathFunctionInstance(this._function, term).reduce()))
                 .prepend("(").append(")"))
     }
