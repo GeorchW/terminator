@@ -35,11 +35,23 @@ class Product extends AbelianTerm {
             }
             function toDisplayable(terms: AbelianTermItem[], product: Product) : JQuery<HTMLElement> {
                 const result = $("<span/>")
-                var isFirst = true
+                var i = 0
                 for (const term of terms) {
                     const displayedTerm = new AbelianTermItem(Math.abs(term.constantModifier), term.actualTerm)
-                    if (isFirst) isFirst = false
-                    else result.append(params.preferString ? product.operationSymbol : product.operationSymbolHtml)
+                    if (i != 0){ 
+                        const sumTerms = []
+                        const lastTerm = terms[i-1].actualTerm
+                        if(lastTerm instanceof Sum) sumTerms.push(lastTerm)
+                        if(term.actualTerm instanceof Sum) sumTerms.push(term)
+                        var onOpClick : JQuery.EventHandler<HTMLElement> | JQuery.EventHandlerBase<any, JQuery.Event> | false = false
+                        if(sumTerms.length == 1){
+                            onOpClick = () => alert("TODO: apply distributive law")
+                        }
+                        if(sumTerms.length > 1){
+                            onOpClick = () => alert("TODO: popup asking where distributive law should be applied")
+                        }
+                        result.append(clickable(params.preferString ? product.operationSymbol : product.operationSymbolHtml, onOpClick))
+                    }
                     var onClick = () => {
                         if (context.currentEquation == undefined) return
                         const newEquation = context.currentEquation.apply(product.getInverter(term))
@@ -48,6 +60,8 @@ class Product extends AbelianTerm {
                     result.append(clickable(
                         product.itemToDisplayable(displayedTerm, params.unclickable(), terms.length > 1),
                         params.clickable ? onClick : false))
+
+                    i += 1
                 }
                 return result
             }
