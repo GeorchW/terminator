@@ -28,8 +28,8 @@ body{
     grid-column: 3
 }
 
-#sum{
-    display: inline-block;
+.sum{
+    position: relative;
 }
 
 #subtext {

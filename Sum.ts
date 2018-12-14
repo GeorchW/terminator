@@ -4,6 +4,7 @@ class Sum extends AbelianTerm {
         replaceLonelySumWithProduct,
         moveConstantSummandsToBack,
         unifyConstantSummands])
+    replacementRules = [new DistributiveSumReplacement()]
     public operationSymbol = "+"
     public neutralElement = 0
     private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams, replaceItem: TermReplacer): JQuery<HTMLElement> {
@@ -31,7 +32,7 @@ class Sum extends AbelianTerm {
             return this.toDisplayableWithModifier(item, params, replaceItem)
     }
     public toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> {
-        let result = $("<span/>")
+        let result = $("<span/>").addClass("sum")
         if (this.terms.array.length == 0)
             result.append(this.neutralElement.toString())
         else {
@@ -39,7 +40,8 @@ class Sum extends AbelianTerm {
             for (const term of this.terms.array) {
                 if (isFirst) isFirst = false
                 else if (this.requiresOperationSymbol(term))
-                    result.append(this.operationSymbol)
+                    result.append(clickable(this.operationSymbol,
+                        params.replaceable ? () => result.append(this.getReplacementsMenu(context, replaceSelf)) : false))
                 const onClick = () => {
                     if (context.currentEquation == undefined) return
                     const newEquation = context.currentEquation.apply(this.getInverter(term))
