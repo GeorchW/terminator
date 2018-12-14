@@ -3,57 +3,64 @@ class Product extends AbelianTerm {
     public operationSymbol = "*"
     public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1
-    private toDisplayableWithoutModifier(term: Term, params: DisplayParams): string | JQuery<HTMLElement> {
-        if (term instanceof Sum) {
+    private toDisplayableWithoutModifier(term: Term, params: DisplayParams, mayNeedBrackets:boolean): string | JQuery<HTMLElement> {
+        if (term instanceof Sum && mayNeedBrackets) {
             return $("<span/>").append("(", term.toDisplayable(params), ")")
         }
         return term.toDisplayable(params)
     }
-    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams): string | JQuery<HTMLElement> {
-        const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params)
+    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams, mayNeedBrackets:boolean): string | JQuery<HTMLElement> {
+        const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params, mayNeedBrackets)
         if (params.preferString)
             return $("<span/>").append(baseTerm, "^", item.constantModifier.toString())
         else
             return $("<span/>").append(baseTerm, $("<sup/>").append(item.constantModifier.toString()))
     }
-    private itemToDisplayable(item: AbelianTermItem, params: DisplayParams): JQuery<HTMLElement> | string {
+    private itemToDisplayable(item: AbelianTermItem, params: DisplayParams, mayNeedBrackets:boolean): JQuery<HTMLElement> | string {
         if (item.constantModifier == 1)
-            return this.toDisplayableWithoutModifier(item.actualTerm, params)
+            return this.toDisplayableWithoutModifier(item.actualTerm, params, mayNeedBrackets)
         else
-            return this.toDisplayableWithModifier(item, params)
+            return this.toDisplayableWithModifier(item, params, mayNeedBrackets)
     }
     public toDisplayable(params: DisplayParams): JQuery<HTMLElement> {
         const result = $("<span/>").attr("class", "product")
         if (this.terms.array.length == 0)
             result.append(this.neutralElement.toString())
         else {
-            const targetDividend = { target: $("<span/>"), empty: true }
-            const targetDivisor = { target: $("<span/>"), empty: true }
+            const dividend: AbelianTermItem[] = []
+            const divisor: AbelianTermItem[] = []
             for (const term of this.terms.array) {
-                const target = term.constantModifier > 0 ? targetDividend : targetDivisor
-                const displayedTerm = new AbelianTermItem(Math.abs(term.constantModifier), term.actualTerm)
-                if (target.empty) target.empty = false
-                else target.target.append(params.preferString ? this.operationSymbol : this.operationSymbolHtml)
-                if (params.clickable)
-                    target.target.append(
-                        clickable(
-                            this.itemToDisplayable(
-                                displayedTerm,
-                                params.unclickable()), () => {
-                                    if (context.currentEquation == undefined) return
-                                    const newEquation = context.currentEquation.apply(this.getInverter(term))
-                                    context.addNewEquation(newEquation)
-                                }))
-                else target.target.append(this.itemToDisplayable(displayedTerm, params))
+                const target = term.constantModifier > 0 ? dividend : divisor
+                target.push(term)
             }
-            if (targetDivisor.empty) result.append(targetDividend.target)
+            function toDisplayable(terms: AbelianTermItem[], product: Product) : JQuery<HTMLElement> {
+                const result = $("<span/>")
+                var isFirst = true
+                for (const term of terms) {
+                    const displayedTerm = new AbelianTermItem(Math.abs(term.constantModifier), term.actualTerm)
+                    if (isFirst) isFirst = false
+                    else result.append(params.preferString ? product.operationSymbol : product.operationSymbolHtml)
+                    var onClick = () => {
+                        if (context.currentEquation == undefined) return
+                        const newEquation = context.currentEquation.apply(product.getInverter(term))
+                        context.addNewEquation(newEquation)
+                    }
+                    result.append(clickable(
+                        product.itemToDisplayable(displayedTerm, params.unclickable(), terms.length > 1),
+                        params.clickable ? onClick : false))
+                }
+                return result
+            }
+            if (divisor.length == 0) result.append(toDisplayable(dividend, this))
             else {
+                const dividendElement = toDisplayable(dividend, this)
+                const divisorElement = toDisplayable(divisor, this)
                 result.addClass("fraction")
-                if (targetDividend.empty) targetDividend.target.append("1")
+                if (dividend.length == 0) dividendElement.append("1")
                 if (params.preferString)
-                    result.append(targetDividend.target, " / (", targetDivisor.target, ")")
+                    result.append(dividendElement, " / (", divisorElement, ")")
                 else
-                    result.append(targetDividend.target, $("<hr/>"), targetDivisor.target)
+                    result.append(dividendElement, $("<hr/>"), divisorElement)
             }
 
         }
