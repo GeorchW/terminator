@@ -38,6 +38,14 @@ abstract class AbelianTerm extends Term {
             return newTerm.reduce()
         }
     }
+    protected getReplacer(item: AbelianTermItem, replaceSelf: TermReplacer): TermReplacer {
+        return newTerm => replaceSelf(
+            this.createNew(
+                this.terms.array.map(originalItem =>
+                    originalItem == item ?
+                        new AbelianTermItem(item.constantModifier, newTerm) :
+                        originalItem)))
+    }
     public abstract createNew(terms: (AbelianTermItem | Term)[]): AbelianTerm
 }
 

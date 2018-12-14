@@ -26,13 +26,13 @@ abstract class Term implements IHashable {
     }
     protected reductions: Reduction[] = [];
     public toString(): string {
-        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, true))
+        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, true), () => new Equation(new Constant(0), new Constant(0)))
         if (typeof result == "string")
             return result
         else
             return result.text()
     }
-    public abstract toDisplayable(params: DisplayParams): JQuery<HTMLElement>;
+    public abstract toDisplayable(params: DisplayParams, replaceSelf:TermReplacer): JQuery<HTMLElement>;
 }
 
 interface Reduction {

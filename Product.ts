@@ -3,26 +3,26 @@ class Product extends AbelianTerm {
     public operationSymbol = "*"
     public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1
-    private toDisplayableWithoutModifier(term: Term, params: DisplayParams, mayNeedBrackets:boolean): string | JQuery<HTMLElement> {
+    private toDisplayableWithoutModifier(term: Term, params: DisplayParams, mayNeedBrackets: boolean, replaceTerm: TermReplacer): string | JQuery<HTMLElement> {
         if (term instanceof Sum && mayNeedBrackets) {
-            return $("<span/>").append("(", term.toDisplayable(params), ")")
+            return $("<span/>").append("(", term.toDisplayable(params, replaceTerm), ")")
         }
-        return term.toDisplayable(params)
+        return term.toDisplayable(params, replaceTerm)
     }
-    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams): string | JQuery<HTMLElement> {
-        const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params, true)
+    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams, replaceItem: TermReplacer): string | JQuery<HTMLElement> {
+        const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params, true, replaceItem)
         if (params.preferString)
             return $("<span/>").append(baseTerm, "^", item.constantModifier.toString())
         else
             return $("<span/>").append(baseTerm, $("<sup/>").append(item.constantModifier.toString()))
     }
-    private itemToDisplayable(item: AbelianTermItem, params: DisplayParams, mayNeedBrackets:boolean): JQuery<HTMLElement> | string {
+    private itemToDisplayable(item: AbelianTermItem, params: DisplayParams, mayNeedBrackets: boolean, replaceItem: TermReplacer): JQuery<HTMLElement> | string {
         if (item.constantModifier == 1)
-            return this.toDisplayableWithoutModifier(item.actualTerm, params, mayNeedBrackets)
+            return this.toDisplayableWithoutModifier(item.actualTerm, params, mayNeedBrackets, replaceItem)
         else
-            return this.toDisplayableWithModifier(item, params)
+            return this.toDisplayableWithModifier(item, params, replaceItem)
     }
-    public toDisplayable(params: DisplayParams): JQuery<HTMLElement> {
+    public toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> {
         const result = $("<span/>").attr("class", "product")
         if (this.terms.array.length == 0)
             result.append(this.neutralElement.toString())
@@ -33,21 +33,21 @@ class Product extends AbelianTerm {
                 const target = term.constantModifier > 0 ? dividend : divisor
                 target.push(term)
             }
-            function toDisplayable(terms: AbelianTermItem[], product: Product) : JQuery<HTMLElement> {
+            function toDisplayable(terms: AbelianTermItem[], product: Product): JQuery<HTMLElement> {
                 const result = $("<span/>")
                 var i = 0
                 for (const term of terms) {
                     const displayedTerm = new AbelianTermItem(Math.abs(term.constantModifier), term.actualTerm)
-                    if (i != 0){ 
+                    if (i != 0) {
                         const sumTerms = []
-                        const lastTerm = terms[i-1].actualTerm
-                        if(lastTerm instanceof Sum) sumTerms.push(lastTerm)
-                        if(term.actualTerm instanceof Sum) sumTerms.push(term)
-                        var onOpClick : JQuery.EventHandler<HTMLElement> | JQuery.EventHandlerBase<any, JQuery.Event> | false = false
-                        if(sumTerms.length == 1){
+                        const lastTerm = terms[i - 1].actualTerm
+                        if (lastTerm instanceof Sum) sumTerms.push(lastTerm)
+                        if (term.actualTerm instanceof Sum) sumTerms.push(term)
+                        var onOpClick: JQuery.EventHandler<HTMLElement> | JQuery.EventHandlerBase<any, JQuery.Event> | false = false
+                        if (sumTerms.length == 1) {
                             onOpClick = () => alert("TODO: apply distributive law")
                         }
-                        if(sumTerms.length > 1){
+                        if (sumTerms.length > 1) {
                             onOpClick = () => alert("TODO: popup asking where distributive law should be applied")
                         }
                         result.append(clickable(params.preferString ? product.operationSymbol : product.operationSymbolHtml, onOpClick))
@@ -58,7 +58,7 @@ class Product extends AbelianTerm {
                         context.addNewEquation(newEquation)
                     }
                     result.append(clickable(
-                        product.itemToDisplayable(displayedTerm, params.unclickable(), terms.length > 1),
+                        product.itemToDisplayable(displayedTerm, params.unclickable(), terms.length > 1, product.getReplacer(displayedTerm, replaceSelf)),
                         params.clickable ? onClick : false))
 
                     i += 1
