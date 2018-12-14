@@ -9,8 +9,8 @@ class Product extends AbelianTerm {
         }
         return term.toDisplayable(params)
     }
-    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams, mayNeedBrackets:boolean): string | JQuery<HTMLElement> {
-        const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params, mayNeedBrackets)
+    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams): string | JQuery<HTMLElement> {
+        const baseTerm = this.toDisplayableWithoutModifier(item.actualTerm, params, true)
         if (params.preferString)
             return $("<span/>").append(baseTerm, "^", item.constantModifier.toString())
         else
@@ -20,7 +20,7 @@ class Product extends AbelianTerm {
         if (item.constantModifier == 1)
             return this.toDisplayableWithoutModifier(item.actualTerm, params, mayNeedBrackets)
         else
-            return this.toDisplayableWithModifier(item, params, mayNeedBrackets)
+            return this.toDisplayableWithModifier(item, params)
     }
     public toDisplayable(params: DisplayParams): JQuery<HTMLElement> {
         const result = $("<span/>").attr("class", "product")
