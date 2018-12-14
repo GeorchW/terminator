@@ -55,7 +55,9 @@ hr {
 }
 
 #equationInput {
-    width: 95%;
+    width: 100%;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
     overflow: hidden;
     border-width: 1px;
     padding: 0.5em;
