@@ -104,7 +104,6 @@ function parse(text: string): Equation | undefined {
                     }
                     else if (isDigit(state.currentChar)) {
                         const string = consumeToken(state, isDigit);
-                        console.log("parsing as int", string)
                         left = new Constant(parseInt(string));
                     }
                     else {

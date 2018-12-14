@@ -69,7 +69,7 @@ class MathFunctionInstance extends Term {
             .append(
                 this.innerTerm.toDisplayable(
                     params.unclickable(),
-                    term => replaceSelf(new MathFunctionInstance(this._function, term)))
+                    term => replaceSelf(new MathFunctionInstance(this._function, term).reduce()))
                 .prepend("(").append(")"))
     }
 }

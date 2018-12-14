@@ -39,13 +39,24 @@ class Product extends AbelianTerm {
                 for (const term of terms) {
                     const displayedTerm = new AbelianTermItem(Math.abs(term.constantModifier), term.actualTerm)
                     if (i != 0) {
-                        const sumTerms = []
-                        const lastTerm = terms[i - 1].actualTerm
-                        if (lastTerm instanceof Sum) sumTerms.push(lastTerm)
-                        if (term.actualTerm instanceof Sum) sumTerms.push(term)
+                        const sumTerms: AbelianTermItem[] = []
+                        const lastTerm = terms[i - 1]
+                        if (lastTerm.actualTerm instanceof Sum && lastTerm.constantModifier == 1) sumTerms.push(lastTerm)
+                        if (term.actualTerm instanceof Sum && term.constantModifier == 1) sumTerms.push(term)
                         var onOpClick: JQuery.EventHandler<HTMLElement> | JQuery.EventHandlerBase<any, JQuery.Event> | false = false
                         if (sumTerms.length == 1) {
-                            onOpClick = () => alert("TODO: apply distributive law")
+                            onOpClick = () => {
+                                const replacedSumTerm = sumTerms[0]
+                                const remainingProductTerms = product.terms.array.filter(item => item != replacedSumTerm)
+                                const replacement = new Sum(
+                                    (replacedSumTerm.actualTerm as Sum).terms.array.map(originalTerm =>
+                                        new Product([
+                                            new Constant(originalTerm.constantModifier),
+                                            originalTerm.actualTerm,
+                                            ...remainingProductTerms]).reduce())
+                                ).reduce()
+                                context.addNewEquation(replaceSelf(replacement))
+                            }
                         }
                         if (sumTerms.length > 1) {
                             onOpClick = () => alert("TODO: popup asking where distributive law should be applied")

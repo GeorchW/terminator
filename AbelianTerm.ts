@@ -2,9 +2,9 @@
 // Common base class for Sum and Product.
 abstract class AbelianTerm extends Term {
     public static readonly abelianReductions = [
-        mergeAssociativeTerms, 
-        removeNeutralElements, 
-        removeIdentityOperations, 
+        mergeAssociativeTerms,
+        removeNeutralElements,
+        removeIdentityOperations,
         replaceEmptySetWithNeutralElement]
     reductions = AbelianTerm.abelianReductions
     readonly hash: number
@@ -44,7 +44,8 @@ abstract class AbelianTerm extends Term {
                 this.terms.array.map(originalItem =>
                     originalItem == item ?
                         new AbelianTermItem(item.constantModifier, newTerm) :
-                        originalItem)))
+                        originalItem))
+            .reduce())
     }
     public abstract createNew(terms: (AbelianTermItem | Term)[]): AbelianTerm
 }
