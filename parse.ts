@@ -122,11 +122,18 @@ function parse(text: string): Equation | undefined {
         return parseTerm(new ParserState(text));
     }
     const terms = text.split("=");
-    if (terms.length != 2)
-        return undefined;
+    if (terms.length != 2){
+        const left = parseTermAsText(text);
+        if(left != undefined)
+            return new Equation(left, new Constant(0));
+        else
+            return new Equation(new Constant(0), new Constant(0))
+    }
     else {
         var left = parseTermAsText(terms[0]);
         var right = parseTermAsText(terms[1]);
+        if(left == undefined) left = new Constant(0)
+        if(right == undefined) right = new Constant(0)
         if (left != undefined && right != undefined)
             return new Equation(left.reduce(), right.reduce());
         else
