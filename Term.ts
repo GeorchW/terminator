@@ -40,7 +40,9 @@ abstract class Term implements IHashable {
             _ => Equation.default)
     }
     protected getReplacementsMenu(context: EquationContext, replaceSelf: TermReplacer): JQuery<HTMLElement> {
-        const replacementsMenu = $("<span/>").addClass("replacementsMenu")
+        const replacementsMenu = $("<span/>")
+            .addClass("replacementsMenu")
+            .addClass("removeWhenClickedOffscreen")
         replacementsMenu.append(this.getReplacements().map(replaced =>
             clickable(replaced.toEventlessHtml(), () => {
                 context.addNewEquation(replaceSelf(replaced))

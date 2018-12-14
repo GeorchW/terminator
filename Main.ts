@@ -73,5 +73,6 @@ function onStart() {
     })
     $("#undoButton").on("click", () => localContext.undo())
     $("body").on("click", () => {$(".autoHideVisible:not(:hover)").removeClass("autoHideVisible")})
+    $("body").on("mousedown", () => {$(".removeWhenClickedOffscreen:not(:hover)").remove()})
 }
 
