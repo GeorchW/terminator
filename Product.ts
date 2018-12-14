@@ -24,7 +24,7 @@ class Product extends AbelianTerm {
             return this.toDisplayableWithModifier(item, params, replaceItem)
     }
     public toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> {
-        const result = $("<span/>").attr("class", "product")
+        const result = $("<span/>").addClass("product").addClass("hasOperator")
         if (this.terms.array.length == 0)
             result.append(this.neutralElement.toString())
         else {
@@ -40,29 +40,8 @@ class Product extends AbelianTerm {
                 for (const term of terms) {
                     const displayedTerm = new AbelianTermItem(Math.abs(term.constantModifier), term.actualTerm)
                     if (i != 0) {
-                        const sumTerms: AbelianTermItem[] = []
-                        const lastTerm = terms[i - 1]
-                        if (lastTerm.actualTerm instanceof Sum && lastTerm.constantModifier == 1) sumTerms.push(lastTerm)
-                        if (term.actualTerm instanceof Sum && term.constantModifier == 1) sumTerms.push(term)
-                        var onOpClick: JQuery.EventHandler<HTMLElement> | JQuery.EventHandlerBase<any, JQuery.Event> | false = false
-                        if (sumTerms.length == 1) {
-                            onOpClick = () => {
-                                const replacedSumTerm = sumTerms[0]
-                                const remainingProductTerms = product.terms.array.filter(item => item != replacedSumTerm)
-                                const replacement = new Sum(
-                                    (replacedSumTerm.actualTerm as Sum).terms.array.map(originalTerm =>
-                                        new Product([
-                                            new Constant(originalTerm.constantModifier),
-                                            originalTerm.actualTerm,
-                                            ...remainingProductTerms]).reduce())
-                                ).reduce()
-                                context.addNewEquation(replaceSelf(replacement))
-                            }
-                        }
-                        if (sumTerms.length > 1) {
-                            onOpClick = () => alert("TODO: popup asking where distributive law should be applied")
-                        }
-                        result.append(clickable(params.preferString ? product.operationSymbol : product.operationSymbolHtml, onOpClick))
+                        var onOpClick = () => result.append(product.getReplacementsMenu(params.context, replaceSelf))
+                        result.append(clickable(params.preferString ? product.operationSymbol : product.operationSymbolHtml, params.replaceable ? onOpClick : false))
                     }
                     var onClick = () => {
                         if (context.currentEquation == undefined) return

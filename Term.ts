@@ -27,13 +27,28 @@ abstract class Term implements IHashable {
     protected replacementRules: TermReplacementRule[] = []
     protected reductions: Reduction[] = []
     public toString(): string {
-        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, false, true), () => new Equation(new Constant(0), new Constant(0)))
+        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, false, true), () => Equation.default)
         if (typeof result == "string")
             return result
         else
             return result.text()
     }
     public abstract toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement>;
+    public toEventlessHtml(): JQuery<HTMLElement> {
+        return this.toDisplayable(
+            new DisplayParams(context, false, false, false),
+            _ => Equation.default)
+    }
+    protected getReplacementsMenu(context: EquationContext, replaceSelf: TermReplacer): JQuery<HTMLElement> {
+        const replacementsMenu = $("<span/>").addClass("replacementsMenu")
+        replacementsMenu.append(this.getReplacements().map(replaced =>
+            clickable(replaced.toEventlessHtml(), () => {
+                context.addNewEquation(replaceSelf(replaced))
+                replacementsMenu.remove()
+            })
+            .addClass("possibleReplacement")))
+        return replacementsMenu
+    }
     public getReplacements(): Term[] {
         const result = []
         for (const rule of this.replacementRules) {

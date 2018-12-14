@@ -6,6 +6,7 @@ interface TermReplacer {
 }
 
 class Equation {
+    static default = new Equation(new Constant(0), new Constant(0))
     constructor(public left: Term, public right: Term) { }
     public toString(): string {
         return this.left + " = " + this.right;
