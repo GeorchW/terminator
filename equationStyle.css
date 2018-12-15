@@ -142,3 +142,8 @@ hr {
     /* tbd */
     display: block;
 }
+.replacementsMenu .replacementSubtitle{
+    display: block;
+    font-size: 0.667em;
+    color: #888;
+}
