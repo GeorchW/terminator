@@ -147,3 +147,12 @@ hr {
     font-size: 0.667em;
     color: #888;
 }
+
+#popupDestination{
+    display: block;
+    position: relative;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}

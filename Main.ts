@@ -5,6 +5,7 @@ function onStart() {
     var parsed: Equation | undefined;
     const equationArea = $("#equationArea")
     const input = $("#equationInput")
+    const popupDestination = $("#popupDestination")
 
     class DefaultEquationContext implements EquationContext {
         public get currentEquation(): Equation | undefined {
@@ -15,11 +16,11 @@ function onStart() {
         }
         private oldEquations: Array<[Equation, JQuery<HTMLElement>]> = []
         addNewEquation(equation: Equation): void {
-            if(!useParsed) {
+            if (!useParsed) {
                 useParsed = true;
                 input.remove()
             }
-            if(this.oldEquations.length > 0)
+            if (this.oldEquations.length > 0)
                 scrollToElements(this.oldEquations[this.oldEquations.length - 1][1])
             const html = equation.toClickableHtml(this).children();
             this.equationArea.append(html)
@@ -34,10 +35,10 @@ function onStart() {
                 html.remove()
             }
         }
-        constructor(private equationArea: JQuery<HTMLElement>) { 
+        constructor(private equationArea: JQuery<HTMLElement>) {
         }
         showPopup(popup: JQuery<HTMLElement>): void {
-            equationArea.append(popup)
+            popupDestination.empty().append(popup)
         }
     }
 
@@ -59,7 +60,7 @@ function onStart() {
             }
         }
     })
-    
+
     $("#copyArea #copyAreaCopyButton").on("click", () => {
         $("#copyArea #copyAreaText").focus().select()
         document.execCommand("copy")
@@ -77,7 +78,8 @@ function onStart() {
         e.stopPropagation()
     })
     $("#undoButton").on("click", () => localContext.undo())
-    $("body").on("click", () => {$(".autoHideVisible:not(:hover)").removeClass("autoHideVisible")})
-    $("body").on("mousedown", () => {$(".removeWhenClickedOffscreen:not(:hover)").remove()})
+    $("body").on("click", () => { $(".autoHideVisible:not(:hover)").removeClass("autoHideVisible") })
+    $("body").on("mousedown", () => { $(".removeWhenClickedOffscreen:not(:hover)").remove() })
+    $("body").on("keypress", e => e.key == "Escape" ? popupDestination.empty() : undefined)
 }
 
