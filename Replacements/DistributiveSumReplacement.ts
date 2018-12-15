@@ -45,7 +45,7 @@ class DistributiveSumReplacement extends TermReplacementRule {
                 }
                 else if (subterm.actualTerm instanceof Product
                     && subterm.actualTerm.terms.array.some(subsubterm => subsubterm.actualTerm.equals(commonFactor) && subsubterm.constantModifier > 0)) {
-                    includedTerms.push(new Product([constant, ...subterm.actualTerm.terms.array, new AbelianTermItem(-1, commonFactor)]))
+                    includedTerms.push(new Product([constant, ...subterm.actualTerm.terms.array, new AbelianTermItem(-1, commonFactor)]).reduce())
                 }
                 else {
                     excludedTerms.push(subterm)
