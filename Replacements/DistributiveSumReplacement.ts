@@ -18,6 +18,9 @@ class DistributiveSumReplacement extends TermReplacementRule {
             if (subterm.actualTerm instanceof Product) {
                 factors.push(...subterm.actualTerm.terms.array.map(term => term.constantModifier != 1 ? new Product([term]) : term.actualTerm))
             }
+            else {
+                factors.push(subterm.actualTerm)
+            }
         }
 
         // Step 2
