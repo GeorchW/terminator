@@ -39,13 +39,16 @@ abstract class AbelianTerm extends Term {
         }
     }
     protected getReplacer(item: AbelianTermItem, replaceSelf: TermReplacer): TermReplacer {
-        return newTerm => replaceSelf(
-            this.createNew(
+        return newTerm => {
+            const newSelf = this.createNew(
                 this.terms.array.map(originalItem =>
-                    originalItem == item ?
+                    originalItem.equals(item) ?
                         new AbelianTermItem(item.constantModifier, newTerm) :
                         originalItem))
-            .reduce())
+                .reduce()
+            // console.log("Replacing", item.actualTerm.toString(), "with", newTerm.toString(), "in", this.toString(), "resulting in", newSelf.toString())
+            return replaceSelf(newSelf)
+        }
     }
     public abstract createNew(terms: (AbelianTermItem | Term)[]): AbelianTerm
 }
