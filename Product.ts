@@ -49,7 +49,7 @@ class Product extends AbelianTerm {
                         context.addNewEquation(newEquation)
                     }
                     result.append(clickable(
-                        product.itemToDisplayable(displayedTerm, params.untransformable(), terms.length > 1, product.getReplacer(displayedTerm, replaceSelf)),
+                        product.itemToDisplayable(displayedTerm, params.untransformable(), terms.length > 1, product.getReplacer(term, replaceSelf)),
                         params.transformable ? onClick : false))
 
                     i += 1
