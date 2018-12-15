@@ -93,6 +93,8 @@ abstract class Term implements IHashable {
                 .append("custom")
             textBox.on("keydown", e => e.key === "Enter" ? tryApply() : undefined)
             custom.append(textBox, preview, subtitleHtml)
+            textBox.focus()
+            textBox.select()
         }))
         replacementsMenu.append(custom)
         return replacementsMenu
