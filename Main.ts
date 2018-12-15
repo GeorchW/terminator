@@ -19,7 +19,8 @@ function onStart() {
                 useParsed = true;
                 input.remove()
             }
-            scrollToElement(this.equationArea.children().last())
+            if(this.oldEquations.length > 0)
+                scrollToElements(this.oldEquations[this.oldEquations.length - 1][1])
             const html = equation.toClickableHtml(this).children();
             this.equationArea.append(html)
             this.oldEquations.push([equation, html])
@@ -36,7 +37,6 @@ function onStart() {
         constructor(private equationArea: JQuery<HTMLElement>) { 
         }
         showPopup(popup: JQuery<HTMLElement>): void {
-            console.log("showing:", popup.toString(), popup)
             equationArea.append(popup)
         }
     }

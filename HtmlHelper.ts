@@ -17,8 +17,12 @@ function clickable(content: string | JQuery<HTMLElement>, handler: JQuery.EventH
     return base
 }
 
-function scrollToElement(element: JQuery<HTMLElement>, speed: number | string = "fast") {
-    const offset = element.offset()
-    if (offset != undefined)
-        $("html, body").animate({ scrollTop: offset.top }, speed);
+function scrollToElements(elements: JQuery<HTMLElement>, speed: number | string = "fast") {
+    var top = 1e300
+    for (const element of elements) {
+        const offset = $(element).offset()
+        if (offset != undefined)
+            top = Math.min(top, offset.top)
+    }
+    $("html, body").animate({ scrollTop: top }, speed);
 };
