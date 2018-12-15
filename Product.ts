@@ -4,6 +4,19 @@ class Product extends AbelianTerm {
     public operationSymbol = "*"
     public get operationSymbolHtml() { return "&#8729;" } // this is the unicode cdot
     public neutralElement = 1
+    public readonly dividendTerms: ReadonlyArray<AbelianTermItem>
+    public readonly divisorTerms: ReadonlyArray<AbelianTermItem>
+    constructor(terms:(AbelianTermItem|Term)[]){
+        super(terms)
+        const dividend: AbelianTermItem[] = []
+        const divisor: AbelianTermItem[] = []
+        for (const term of this.terms.array) {
+            const target = term.constantModifier > 0 ? dividend : divisor
+            target.push(term)
+        }
+        this.dividendTerms = dividend
+        this.divisorTerms = divisor
+    }
     private toDisplayableWithoutModifier(term: Term, params: DisplayParams, mayNeedBrackets: boolean, replaceTerm: TermReplacer): string | JQuery<HTMLElement> {
         if (term instanceof Sum && mayNeedBrackets) {
             return $("<span/>").append("(", term.toDisplayable(params, replaceTerm), ")")
@@ -28,13 +41,7 @@ class Product extends AbelianTerm {
         if (this.terms.array.length == 0)
             result.append(this.neutralElement.toString())
         else {
-            const dividend: AbelianTermItem[] = []
-            const divisor: AbelianTermItem[] = []
-            for (const term of this.terms.array) {
-                const target = term.constantModifier > 0 ? dividend : divisor
-                target.push(term)
-            }
-            function toDisplayable(terms: AbelianTermItem[], product: Product): JQuery<HTMLElement> {
+            function toDisplayable(terms: ReadonlyArray<AbelianTermItem>, product: Product): JQuery<HTMLElement> {
                 const result = $("<span/>")
                 var i = 0
                 for (const term of terms) {
@@ -56,12 +63,12 @@ class Product extends AbelianTerm {
                 }
                 return result
             }
-            if (divisor.length == 0) result.append(toDisplayable(dividend, this))
+            if (this.divisorTerms.length == 0) result.append(toDisplayable(this.dividendTerms, this))
             else {
-                const dividendElement = toDisplayable(dividend, this)
-                const divisorElement = toDisplayable(divisor, this)
+                const dividendElement = toDisplayable(this.dividendTerms, this)
+                const divisorElement = toDisplayable(this.divisorTerms, this)
                 result.addClass("fraction")
-                if (dividend.length == 0) dividendElement.append("1")
+                if (this.dividendTerms.length == 0) dividendElement.append("1")
                 if (params.preferString)
                     result.append(dividendElement, " / (", divisorElement, ")")
                 else
