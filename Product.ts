@@ -40,7 +40,7 @@ class Product extends AbelianTerm {
                 for (const term of terms) {
                     const displayedTerm = new AbelianTermItem(Math.abs(term.constantModifier), term.actualTerm)
                     if (i != 0) {
-                        var onOpClick = () => result.append(product.getReplacementsMenu(params.context, replaceSelf))
+                        var onOpClick = () => product.showReplacementsMenu(params.context, replaceSelf, result)
                         result.append(clickable(params.preferString ? product.operationSymbol : product.operationSymbolHtml, params.replaceable ? onOpClick : false))
                     }
                     var onClick = () => {

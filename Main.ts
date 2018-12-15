@@ -33,7 +33,12 @@ function onStart() {
                 html.remove()
             }
         }
-        constructor(private equationArea: JQuery<HTMLElement>) { }
+        constructor(private equationArea: JQuery<HTMLElement>) { 
+        }
+        showPopup(popup: JQuery<HTMLElement>): void {
+            console.log("showing:", popup.toString(), popup)
+            equationArea.append(popup)
+        }
     }
 
     var localContext = context = new DefaultEquationContext(equationArea.empty())

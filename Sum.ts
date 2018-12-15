@@ -41,7 +41,7 @@ class Sum extends AbelianTerm {
                 if (isFirst) isFirst = false
                 else if (this.requiresOperationSymbol(term))
                     result.append(clickable(this.operationSymbol,
-                        params.replaceable ? () => result.append(this.getReplacementsMenu(context, replaceSelf)) : false))
+                        params.replaceable ? () => this.showReplacementsMenu(context, replaceSelf, result) : false))
                 const onClick = () => {
                     if (context.currentEquation == undefined) return
                     const newEquation = context.currentEquation.apply(this.getInverter(term))

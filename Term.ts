@@ -27,7 +27,7 @@ abstract class Term implements IHashable {
     protected replacementRules: TermReplacementRule[] = []
     protected reductions: Reduction[] = []
     public toString(): string {
-        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, false, true), () => Equation.default)
+        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined, showPopup: () => { } }, false, false, true), () => Equation.default)
         if (typeof result == "string")
             return result
         else
@@ -39,7 +39,7 @@ abstract class Term implements IHashable {
             new DisplayParams(context, false, false, false),
             _ => Equation.default)
     }
-    protected getReplacementsMenu(context: EquationContext, replaceSelf: TermReplacer): JQuery<HTMLElement> {
+    protected showReplacementsMenu(context: EquationContext, replaceSelf: TermReplacer, parent: JQuery<HTMLElement>) {
         const replacementsMenu = $("<span/>")
             .addClass("replacementsMenu")
             .addClass("removeWhenClickedOffscreen")
@@ -47,7 +47,7 @@ abstract class Term implements IHashable {
         function applyReplacement(replacement: Term) {
             context.addNewEquation(replaceSelf(replacement))
             closeMenu()
-    }
+        }
         function toHtml(rule: TermReplacementRule, replacement: Term): JQuery<HTMLElement> {
             const equationHtml = replacement.toEventlessHtml()
             const subtitleHtml = $("<span/>")
@@ -72,8 +72,8 @@ abstract class Term implements IHashable {
                 .attr("value", this.toString())
             var originalValue = this
             var parsedReplacement: Term = this;
-            function tryApply(){
-                if(!parsedReplacement.equals(originalValue))
+            function tryApply() {
+                if (!parsedReplacement.equals(originalValue))
                     applyReplacement(parsedReplacement)
                 else
                     closeMenu()
@@ -86,7 +86,7 @@ abstract class Term implements IHashable {
                 if (typeof value != "string") return
                 parsedReplacement = parseTerm(value)
                 preview.empty().append(parsedReplacement.toEventlessHtml())
-        }
+            }
             textBox.on("input", updateParsing)
             const subtitleHtml = $("<span/>")
                 .addClass("replacementSubtitle")
@@ -97,7 +97,15 @@ abstract class Term implements IHashable {
             textBox.select()
         }))
         replacementsMenu.append(custom)
-        return replacementsMenu
+        context.showPopup(replacementsMenu)
+        const offset = parent.offset()
+        const width = parent.width()
+        const height = parent.height()
+        if (offset == undefined || width == undefined || height == undefined) return
+        replacementsMenu.css("position", "absolute")
+            .css("left", offset.left)
+            .css("top", offset.top + height)
+
     }
 }
 
