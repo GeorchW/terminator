@@ -45,7 +45,7 @@ function onStart() {
     input.on("input", () => {
         const val = input.val()
         if (val != undefined) {
-            parsed = parse(val.toString())
+            parsed = parseEquation(val.toString())
             if (parsed != undefined) {
                 equationArea.empty().append(parsed.toClickableHtml(context).children())
             }

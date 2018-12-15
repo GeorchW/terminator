@@ -43,20 +43,59 @@ abstract class Term implements IHashable {
         const replacementsMenu = $("<span/>")
             .addClass("replacementsMenu")
             .addClass("removeWhenClickedOffscreen")
-        replacementsMenu.append(this.getReplacements().map(replaced =>
-            clickable(replaced.toEventlessHtml(), () => {
-                context.addNewEquation(replaceSelf(replaced))
-                replacementsMenu.remove()
-            })
-            .addClass("possibleReplacement")))
-        return replacementsMenu
+        const closeMenu = () => replacementsMenu.remove()
+        function applyReplacement(replacement: Term) {
+            context.addNewEquation(replaceSelf(replacement))
+            closeMenu()
     }
-    public getReplacements(): Term[] {
-        const result = []
-        for (const rule of this.replacementRules) {
-            result.push(...rule.getReplacements(this))
+        function toHtml(rule: TermReplacementRule, replacement: Term): JQuery<HTMLElement> {
+            const equationHtml = replacement.toEventlessHtml()
+            const subtitleHtml = $("<span/>")
+                .addClass("replacementSubtitle")
+                .append(rule.name)
+            return clickable($("<span/>"), () => applyReplacement(replacement))
+                .addClass("possibleReplacement")
+                .append(equationHtml)
+                .append(subtitleHtml)
         }
-        return result
+        for (const rule of this.replacementRules) {
+            for (const replacement of rule.getReplacements(this)) {
+                replacementsMenu.append(toHtml(rule, replacement))
+            }
+        }
+        const custom = $("<span/>")
+        custom.append(clickable("custom...", () => {
+            custom.empty();
+            const textBox = $("<input>")
+                .addClass("customReplacementInput")
+                .attr("type", "text")
+                .attr("value", this.toString())
+            var originalValue = this
+            var parsedReplacement: Term = this;
+            function tryApply(){
+                if(!parsedReplacement.equals(originalValue))
+                    applyReplacement(parsedReplacement)
+                else
+                    closeMenu()
+            }
+            const preview = clickable($("<span/>"), tryApply)
+                .addClass("customReplacementPreview")
+                .append(this.toEventlessHtml())
+            function updateParsing() {
+                const value = textBox.val()
+                if (typeof value != "string") return
+                parsedReplacement = parseTerm(value)
+                preview.empty().append(parsedReplacement.toEventlessHtml())
+        }
+            textBox.on("input", updateParsing)
+            const subtitleHtml = $("<span/>")
+                .addClass("replacementSubtitle")
+                .append("custom")
+            textBox.on("keydown", e => e.key === "Enter" ? tryApply() : undefined)
+            custom.append(textBox, preview, subtitleHtml)
+        }))
+        replacementsMenu.append(custom)
+        return replacementsMenu
     }
 }
 
