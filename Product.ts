@@ -51,9 +51,9 @@ class Product extends AbelianTerm {
                         result.append(clickable(params.preferString ? product.operationSymbol : product.operationSymbolHtml, params.replaceable ? onOpClick : false))
                     }
                     var onClick = () => {
-                        if (context.currentEquation == undefined) return
-                        const newEquation = context.currentEquation.apply(product.getInverter(term))
-                        context.addNewEquation(newEquation)
+                        if (params.context.currentEquation == undefined) return
+                        const newEquation = params.context.currentEquation.apply(product.getInverter(term))
+                        params.context.addNewEquation(newEquation)
                     }
                     result.append(clickable(
                         product.itemToDisplayable(displayedTerm, params.untransformable(), terms.length > 1, product.getReplacer(term, replaceSelf)),

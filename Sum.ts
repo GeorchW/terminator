@@ -7,33 +7,35 @@ class Sum extends AbelianTerm {
     replacementRules = [new DistributiveSumReplacement()]
     public operationSymbol = "+"
     public neutralElement = 0
-    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams, replaceItem: TermReplacer): JQuery<HTMLElement> {
+    private toDisplayableWithModifier(item: AbelianTermItem, params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> {
         var result = $("<span/>")
         var displayModifierNumber = Math.abs(item.constantModifier) != 1
         const modifierString = displayModifierNumber ?
             item.constantModifier.toString() :
             (item.constantModifier > 0 ? "+" : "-")
         result.append($("<span/>").append(modifierString))
-        if (displayModifierNumber)
-            result.append($("<span/>").append(params.preferString ? "*" : "&#8729;"))
-        const actualTermHtml = item.actualTerm.toDisplayable(params, replaceItem)
+        if (displayModifierNumber){
+            const multiplicationSymbol = params.preferString ? "*" : "&#8729;"
+            const multiplicationSymbolHtml = clickable(multiplicationSymbol, () => {
+                new Product([new Constant(item.constantModifier), item.actualTerm]).showReplacementsMenu(params.context, this.getReplacer(item, replaceSelf, false), result)
+            })
+            result.append($("<span/>").append(params.replaceable ? multiplicationSymbolHtml : multiplicationSymbol))
+        }
+        const actualTermHtml = item.actualTerm.toDisplayable(params, this.getReplacer(item, replaceSelf))
         result.append(actualTermHtml)
         if(item.actualTerm instanceof Sum)
             result.append("(", actualTermHtml, ")")
         else result.append(actualTermHtml)
         return result
     }
-    private requiresOperationSymbol(term: AbelianTermItem) {
-        return term.constantModifier > 0
+    private toDisplayableWithoutModifier(item: AbelianTermItem, params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> | string {
+        return item.actualTerm.toDisplayable(params, this.getReplacer(item, replaceSelf))
     }
-    private toDisplayableWithoutModifier(term: Term, params: DisplayParams, replaceItem: TermReplacer): JQuery<HTMLElement> | string {
-        return term.toDisplayable(params, replaceItem)
-    }
-    private itemToDisplayable(item: AbelianTermItem, params: DisplayParams, replaceItem: TermReplacer): JQuery<HTMLElement> | string {
+    private itemToDisplayable(item: AbelianTermItem, params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> | string {
         if (item.constantModifier == 1)
-            return this.toDisplayableWithoutModifier(item.actualTerm, params, replaceItem)
+            return this.toDisplayableWithoutModifier(item, params, replaceSelf)
         else
-            return this.toDisplayableWithModifier(item, params, replaceItem)
+            return this.toDisplayableWithModifier(item, params, replaceSelf)
     }
     public toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> {
         let result = $("<span/>").addClass("sum")
@@ -43,15 +45,15 @@ class Sum extends AbelianTerm {
             let isFirst = true
             for (const term of this.terms.array) {
                 if (isFirst) isFirst = false
-                else if (this.requiresOperationSymbol(term))
+                else if (term.constantModifier > 0)
                     result.append(clickable(this.operationSymbol,
-                        params.replaceable ? () => this.showReplacementsMenu(context, replaceSelf, result) : false))
+                        params.replaceable ? () => this.showReplacementsMenu(params.context, replaceSelf, result) : false))
                 const onClick = () => {
-                    if (context.currentEquation == undefined) return
-                    const newEquation = context.currentEquation.apply(this.getInverter(term))
-                    context.addNewEquation(newEquation)
+                    if (params.context.currentEquation == undefined) return
+                    const newEquation = params.context.currentEquation.apply(this.getInverter(term))
+                    params.context.addNewEquation(newEquation)
                 }
-                result.append(clickable(this.itemToDisplayable(term, params.untransformable(), this.getReplacer(term, replaceSelf)), params.transformable ? onClick : false))
+                result.append(clickable(this.itemToDisplayable(term, params.untransformable(), replaceSelf), params.transformable ? onClick : false))
             }
         }
         return result

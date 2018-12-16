@@ -3,3 +3,5 @@ interface EquationContext {
     addNewEquation(equation: Equation): void;
     showPopup(popup: JQuery<HTMLElement>): void;
 }
+
+const dummyContext : EquationContext = { addNewEquation: () => { }, currentEquation: undefined, showPopup: () => { } }

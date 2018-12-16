@@ -1,4 +1,5 @@
-let context: EquationContext;
+/** For debugging purposes only (terminal access). Do not use. */
+let globalContext: EquationContext;
 
 function onStart() {
     var useParsed = false;
@@ -42,7 +43,7 @@ function onStart() {
         }
     }
 
-    var localContext = context = new DefaultEquationContext(equationArea.empty())
+    var context = globalContext = new DefaultEquationContext(equationArea.empty())
 
 
     console.log(equationArea, input)
@@ -72,7 +73,7 @@ function onStart() {
         document.execCommand("copy")
         e.stopPropagation()
     })
-    $("#undoButton").on("click", () => localContext.undo())
+    $("#undoButton").on("click", () => context.undo())
     $("html, body").on("click", () => { $(".autoHideVisible:not(:hover)").removeClass("autoHideVisible") })
     $("html, body").on("mousedown", () => { $(".removeWhenClickedOffscreen:not(:hover)").remove() })
     $("html, body").on("keypress", e => e.key == "Escape" ? popupDestination.empty() : undefined)
