@@ -4,12 +4,9 @@ function mergeAssociativeTerms(term: Term): Term {
     let result: AbelianTermItem[] = [];
     let didReductions = false;
     for (const subTerm of term.terms.array) {
-        const reduced = subTerm.actualTerm.reduce();
-        if (Object.getPrototypeOf(reduced) === Object.getPrototypeOf(term)) {
+        if (subTerm.constantModifier == 1 && Object.getPrototypeOf(subTerm.actualTerm) === Object.getPrototypeOf(term)) {
             didReductions = true;
-            for (const subterm of (reduced as AbelianTerm).terms.array) {
-                result.push(new AbelianTermItem(subTerm.constantModifier * subterm.constantModifier, subterm.actualTerm));
-            }
+            result.push(...(subTerm.actualTerm as AbelianTerm).terms.array);
         }
         else {
             result.push(subTerm);

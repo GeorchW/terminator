@@ -16,7 +16,11 @@ class Sum extends AbelianTerm {
         result.append($("<span/>").append(modifierString))
         if (displayModifierNumber)
             result.append($("<span/>").append(params.preferString ? "*" : "&#8729;"))
-        result.append(item.actualTerm.toDisplayable(params, replaceItem))
+        const actualTermHtml = item.actualTerm.toDisplayable(params, replaceItem)
+        result.append(actualTermHtml)
+        if(item.actualTerm instanceof Sum)
+            result.append("(", actualTermHtml, ")")
+        else result.append(actualTermHtml)
         return result
     }
     private requiresOperationSymbol(term: AbelianTermItem) {

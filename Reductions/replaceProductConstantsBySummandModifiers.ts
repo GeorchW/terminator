@@ -14,7 +14,7 @@ function replaceProductConstantsBySummandModifiers(term: Term): Term {
                     else
                         newSubsubTerms.push(subsubterm);
                 }
-                newSubTerms.push(new AbelianTermItem(constant, new Product(newSubsubTerms)));
+                newSubTerms.push(new AbelianTermItem(constant, new Product(newSubsubTerms).reduce()));
             }
             else
                 newSubTerms.push(subterm);
