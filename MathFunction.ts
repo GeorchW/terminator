@@ -52,10 +52,10 @@ class MathFunctionInstance extends Term {
     equals(other: any): boolean {
         return other instanceof MathFunctionInstance && other._function.equals(this._function) && other.innerTerm.equals(this.innerTerm)
     }
-    public toDisplayable(params: DisplayParams): JQuery<HTMLElement> {
+    public toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement> {
         var result = $("<span/>")
         var context = params.context
-        if (params.clickable) {
+        if (params.transformable) {
             result = clickable(result, () => {
                 if (context.currentEquation != undefined) {
                     const newEquation = context.currentEquation.apply(term => new MathFunctionInstance(this._function.inverse, term).reduce())
@@ -66,6 +66,10 @@ class MathFunctionInstance extends Term {
         }
         return result
             .append(this._function.toDisplayable(params))
-            .append(this.innerTerm.toDisplayable(params.unclickable()).prepend("(").append(")"))
+            .append(
+                this.innerTerm.toDisplayable(
+                    params.untransformable(),
+                    term => replaceSelf(new MathFunctionInstance(this._function, term).reduce()))
+                .prepend("(").append(")"))
     }
 }

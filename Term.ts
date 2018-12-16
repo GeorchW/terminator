@@ -24,15 +24,30 @@ abstract class Term implements IHashable {
         } while (result != lastResult);
         return result;
     }
-    protected reductions: Reduction[] = [];
+    public replacementRules: TermReplacementRule[] = []
+    protected reductions: Reduction[] = []
     public toString(): string {
-        const result = this.toDisplayable(new DisplayParams({ addNewEquation: () => { }, currentEquation: undefined }, false, true))
+        const result = this.toDisplayable(new DisplayParams(dummyContext, false, false, true), () => Equation.default)
         if (typeof result == "string")
             return result
         else
             return result.text()
     }
-    public abstract toDisplayable(params: DisplayParams): JQuery<HTMLElement>;
+    public abstract toDisplayable(params: DisplayParams, replaceSelf: TermReplacer): JQuery<HTMLElement>;
+    public toEventlessHtml(): JQuery<HTMLElement> {
+        return this.toDisplayable(
+            new DisplayParams(dummyContext, false, false, false),
+            _ => Equation.default)
+    }
+    public showReplacementsMenu(context: EquationContext, replaceSelf: TermReplacer, parent: JQuery<HTMLElement>) {
+        showReplacementsMenu(this, context, replaceSelf, parent)
+    }
+}
+
+abstract class TermReplacementRule {
+    public abstract get name(): string
+    public abstract get examples(): string[]
+    public abstract getReplacements(term: Term): Term[]
 }
 
 interface Reduction {
@@ -41,10 +56,11 @@ interface Reduction {
 
 class DisplayParams {
     constructor(
-        public context:EquationContext, 
-        public clickable:boolean, 
-        public preferString:boolean){}
-    unclickable(): DisplayParams {
-        return new DisplayParams(this.context, false, this.preferString)
+        public context: EquationContext,
+        public transformable: boolean,
+        public replaceable: boolean,
+        public preferString: boolean) { }
+    untransformable(): DisplayParams {
+        return new DisplayParams(this.context, false, this.replaceable, this.preferString)
     }
 }

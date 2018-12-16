@@ -1,13 +1,13 @@
 describe("parse", () => {
     it("should parse x*(a+c)+b=1 correctly", () => {
-        const parsed = parse("x*(a+c)+b=1")
+        const parsed = parseEquation("x*(a+c)+b=1")
         expect(parsed).not.toBeUndefined()
         if (parsed == undefined) { return }
         if (!(parsed.left instanceof Sum)) { fail("Expected a sum"); return }
     })
 })
 
-function parse(text: string): Equation | undefined {
+function parseTerm(text: string): Term {
     class ParserState {
         private currentPos: number;
         constructor(public text: string) {
@@ -40,7 +40,7 @@ function parse(text: string): Equation | undefined {
         const opChar = state.currentChar;
         state.consumeChar();
         var leftTerm = left == undefined ? new Constant(neutralElement) : left;
-        var right: Term | AbelianTermItem | undefined = parseTerm(state, getPrecedence(opChar));
+        var right: Term | AbelianTermItem | undefined = parseTermInternal(state, getPrecedence(opChar));
         if (right == undefined)
             right = new Constant(neutralElement);
         if (opChar == minusOrDivide) {
@@ -56,7 +56,7 @@ function parse(text: string): Equation | undefined {
     }
     function parseBrackets(state: ParserState): Term | undefined {
         state.consumeChar();
-        const result = parseTerm(state, 0);
+        const result = parseTermInternal(state, 0);
         if (state.currentChar == ")")
             state.consumeChar()
         return result
@@ -73,18 +73,17 @@ function parse(text: string): Equation | undefined {
                 return 1000;
         }
     }
-    function parseTerm(state: ParserState, returnPrecedence = 0): Term | undefined {
+    function parseTermInternal(state: ParserState, returnPrecedence = 0): Term {
         var left: Term | undefined;
         while (state.currentChar != "") {
             if (isWhitespace(state.currentChar)) {
                 state.consumeChar();
                 continue;
             }
-            if (state.currentChar == ")") {
-                return left;
-            }
+            if (state.currentChar == ")")
+                break;
             if (returnPrecedence >= getPrecedence(state.currentChar))
-                return left;
+                break;
             switch (state.currentChar) {
                 case '+':
                 case '-':
@@ -104,7 +103,6 @@ function parse(text: string): Equation | undefined {
                     }
                     else if (isDigit(state.currentChar)) {
                         const string = consumeToken(state, isDigit);
-                        console.log("parsing as int", string)
                         left = new Constant(parseInt(string));
                     }
                     else {
@@ -116,27 +114,24 @@ function parse(text: string): Equation | undefined {
                 left = left.reduce();
             }
         }
-        return left;
+        if (left == undefined) return new Constant(0)
+        else return left;
     }
-    function parseTermAsText(text: string): Term | undefined {
-        return parseTerm(new ParserState(text));
-    }
+    return parseTermInternal(new ParserState(text));
+}
+
+function parseEquation(text: string): Equation {
     const terms = text.split("=");
-    if (terms.length != 2){
-        const left = parseTermAsText(text);
-        if(left != undefined)
+    if (terms.length != 2) {
+        const left = parseTerm(text);
+        if (left != undefined)
             return new Equation(left, new Constant(0));
         else
             return new Equation(new Constant(0), new Constant(0))
     }
     else {
-        var left = parseTermAsText(terms[0]);
-        var right = parseTermAsText(terms[1]);
-        if(left == undefined) left = new Constant(0)
-        if(right == undefined) right = new Constant(0)
-        if (left != undefined && right != undefined)
-            return new Equation(left.reduce(), right.reduce());
-        else
-            return undefined;
+        var left = parseTerm(terms[0]);
+        var right = parseTerm(terms[1]);
+        return new Equation(left.reduce(), right.reduce());
     }
 }

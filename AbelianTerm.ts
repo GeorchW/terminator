@@ -2,9 +2,9 @@
 // Common base class for Sum and Product.
 abstract class AbelianTerm extends Term {
     public static readonly abelianReductions = [
-        mergeAssociativeTerms, 
-        removeNeutralElements, 
-        removeIdentityOperations, 
+        mergeAssociativeTerms,
+        removeNeutralElements,
+        removeIdentityOperations,
         replaceEmptySetWithNeutralElement]
     reductions = AbelianTerm.abelianReductions
     readonly hash: number
@@ -36,6 +36,18 @@ abstract class AbelianTerm extends Term {
         return term => {
             const newTerm = this.createNew([term, new AbelianTermItem(-1 * termItem.constantModifier, termItem.actualTerm)])
             return newTerm.reduce()
+        }
+    }
+    protected getReplacer(item: AbelianTermItem, replaceSelf: TermReplacer, keepFactor: boolean = true): TermReplacer {
+        return newTerm => {
+            const newSelf = this.createNew(
+                this.terms.array.map(originalItem =>
+                    originalItem.equals(item) ?
+                        new AbelianTermItem(keepFactor?item.constantModifier:1, newTerm) :
+                        originalItem))
+                .reduce()
+            // console.log("Replacing", item.actualTerm.toString(), "with", newTerm.toString(), "in", this.toString(), "resulting in", newSelf.toString())
+            return replaceSelf(newSelf)
         }
     }
     public abstract createNew(terms: (AbelianTermItem | Term)[]): AbelianTerm

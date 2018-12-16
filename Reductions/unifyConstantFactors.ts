@@ -1,5 +1,6 @@
 function gcd(a : number, b : number):number{ // greatest common divisor
-    if(a < 0 && b < 0) return -gcd(-a, -b)
+    if(a == 0) return 1
+    else if(a < 0 && b < 0) return -gcd(-a, -b)
     else if(a < 0) return gcd(-a, b)
     else if(b < 0) return -gcd(a, -b)
     else if(a == b) return a
