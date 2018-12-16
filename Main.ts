@@ -52,13 +52,8 @@ function onStart() {
         const val = input.val()
         if (val != undefined) {
             parsed = parseEquation(val.toString())
-            if (parsed != undefined) {
                 equationArea.empty().append(parsed.toClickableHtml(context).children())
             }
-            else {
-                equationArea.empty().append("error")
-            }
-        }
     })
 
     $("#copyArea #copyAreaCopyButton").on("click", () => {
