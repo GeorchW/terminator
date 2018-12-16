@@ -52,8 +52,8 @@ function onStart() {
         const val = input.val()
         if (val != undefined) {
             parsed = parseEquation(val.toString())
-                equationArea.empty().append(parsed.toClickableHtml(context).children())
-            }
+            equationArea.empty().append(parsed.toClickableHtml(context).children())
+        }
     })
 
     $("#copyArea #copyAreaCopyButton").on("click", () => {
@@ -73,8 +73,8 @@ function onStart() {
         e.stopPropagation()
     })
     $("#undoButton").on("click", () => localContext.undo())
-    $("body").on("click", () => { $(".autoHideVisible:not(:hover)").removeClass("autoHideVisible") })
-    $("body").on("mousedown", () => { $(".removeWhenClickedOffscreen:not(:hover)").remove() })
-    $("body").on("keypress", e => e.key == "Escape" ? popupDestination.empty() : undefined)
+    $("html, body").on("click", () => { $(".autoHideVisible:not(:hover)").removeClass("autoHideVisible") })
+    $("html, body").on("mousedown", () => { $(".removeWhenClickedOffscreen:not(:hover)").remove() })
+    $("html, body").on("keypress", e => e.key == "Escape" ? popupDestination.empty() : undefined)
 }
 
