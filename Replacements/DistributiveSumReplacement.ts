@@ -36,8 +36,23 @@ class DistributiveSumReplacement extends TermReplacementRule {
             // We want to have a term of the form
             //     commonFactor * sum(includedTerms) + sum(excludedTerms)
             // at the end.
+            // To be exact, the terms should be moved as little as possible.
+            // Therefore, we're doing this instead:
+            //    sum(excludedTermsBefore) + commonFactor * sum(includedTerms) + sum(excludedTermsAfter)
+            // E.g. a transformation from
+            //    x + a*b + a*c + y
+            // should be transformed into
+            //    x + a*(b+c) + y
+            // instead of
+            //    a*(b+c) + x + y
             const includedTerms = []
-            const excludedTerms = []
+            const excludedTermsBeforeProduct: AbelianTermItem[] = []
+            const excludedTermsAfterProduct: AbelianTermItem[] = []
+            function addExcludedTerm(term: AbelianTermItem) {
+                if (includedTerms.length == 0)
+                    excludedTermsBeforeProduct.push(term)
+                else excludedTermsAfterProduct.push(term)
+            }
             for (const subterm of term.terms.array) {
                 const constant = new Constant(subterm.constantModifier)
                 if (constant.equals(commonFactor)) {
@@ -51,11 +66,10 @@ class DistributiveSumReplacement extends TermReplacementRule {
                     includedTerms.push(new Product([constant, ...subterm.actualTerm.terms.array, new AbelianTermItem(-1, commonFactor)]).reduce())
                 }
                 else {
-                    excludedTerms.push(subterm)
+                    addExcludedTerm(subterm)
                 }
             }
-            console.log(commonFactor, includedTerms, excludedTerms)
-            result.push(new Sum([new Product([commonFactor, new Sum(includedTerms).reduce()]).reduce(), ...excludedTerms]).reduce())
+            result.push(new Sum([...excludedTermsBeforeProduct, new Product([commonFactor, new Sum(includedTerms).reduce()]).reduce(), ...excludedTermsAfterProduct]).reduce())
         }
 
         return result;
