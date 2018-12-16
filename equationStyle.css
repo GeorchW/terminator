@@ -129,6 +129,7 @@ hr {
     background-image: linear-gradient(#FDFDFD, #F8F8F8);
     top: 100%;
     left: 0;
+    white-space: nowrap;
     /* width: 5em; */
     z-index: 1;
 }
@@ -141,11 +142,17 @@ hr {
 .replacementsMenu .possibleReplacement{
     /* tbd */
     display: block;
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    text-align:center;
 }
 .replacementsMenu .replacementSubtitle{
     display: block;
     font-size: 0.667em;
     color: #888;
+}
+.replacementsMenu .customReplacementInput{
+    width: 100%;
 }
 
 #popupDestination{
