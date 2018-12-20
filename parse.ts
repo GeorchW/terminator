@@ -54,7 +54,7 @@ function parseTerm(text: string): Term {
     function parseProduct(left: Term | undefined, state: ParserState): Product {
         return new Product(parseAbelian(left, state, 1, "/"))
     }
-    function parseBrackets(state: ParserState): Term | undefined {
+    function parseBrackets(state: ParserState): Term {
         state.consumeChar();
         const result = parseTermInternal(state, 0);
         if (state.currentChar == ")")
@@ -73,6 +73,38 @@ function parseTerm(text: string): Term {
                 return 1000;
         }
     }
+
+    interface FunctionLookup { [name: string]: MathFunction | undefined }
+    var knownFunctions: FunctionLookup = {
+        "sin": new SimpleMathFunction("sin"),
+        "cos": new SimpleMathFunction("cos"),
+        "tan": new SimpleMathFunction("tan"),
+        "exp": new SimpleMathFunction("exp", "log"),
+    }
+    function forceGetFunction(name: string): MathFunction {
+        const result = knownFunctions[name];
+        if (result) return result
+        else throw new Error()
+    }
+    knownFunctions = {
+        "sin": forceGetFunction("sin"),
+        "cos": forceGetFunction("cos"),
+        "tan": forceGetFunction("tan"),
+        "asin": forceGetFunction("sin").inverse,
+        "acos": forceGetFunction("cos").inverse,
+        "atan": forceGetFunction("tan").inverse,
+        "exp": forceGetFunction("exp"),
+        "log": forceGetFunction("exp").inverse,
+        "ln": forceGetFunction("exp").inverse
+    }
+
+    function getMathFunction(name: string) {
+        const knownFunction = knownFunctions[name]
+        if (knownFunction != undefined)
+            return knownFunction
+        else return new SimpleMathFunction(name)
+    }
+
     function parseTermInternal(state: ParserState, returnPrecedence = 0): Term {
         var left: Term | undefined;
         while (state.currentChar != "") {
@@ -94,7 +126,11 @@ function parseTerm(text: string): Term {
                     left = parseProduct(left, state);
                     break;
                 case "(":
-                    left = parseBrackets(state);
+                    const brackets = parseBrackets(state);
+                    if (left instanceof MathSymbol) {
+                        left = new MathFunctionInstance(getMathFunction(left.name), brackets)
+                    }
+                    else left = brackets;
                     break;
                 default:
                     if (isLetter(state.currentChar)) {
