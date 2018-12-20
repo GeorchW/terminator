@@ -7,7 +7,7 @@ abstract class MathFunction implements IHashable {
 
 class SimpleMathFunction extends MathFunction {
     public readonly hash: number
-    constructor(public name: string) {
+    constructor(public readonly name: string, public readonly inverseName: string | undefined = undefined) {
         super()
         this.hash = stringHash(name)
     }
@@ -35,6 +35,8 @@ class SimpleInverseMathFunction extends MathFunction {
         return other instanceof SimpleInverseMathFunction && other._function.equals(this._function)
     }
     public toDisplayable(params: DisplayParams): JQuery<HTMLElement> {
+        if(this._function.inverseName != undefined)
+            return $("<span/>").append(this._function.inverseName)
         return $("<span/>")
             .append(this._function.toDisplayable(params))
             .append(params.preferString ? "^-1" :
@@ -67,9 +69,11 @@ class MathFunctionInstance extends Term {
         return result
             .append(this._function.toDisplayable(params))
             .append(
-                this.innerTerm.toDisplayable(
-                    params.untransformable(),
-                    term => replaceSelf(new MathFunctionInstance(this._function, term).reduce()))
-                .prepend("(").append(")"))
+                $("<span/>").append(
+                    $("<span/>").append("(").addClass("bracket"),
+                    this.innerTerm.toDisplayable(
+                        params.untransformable(),
+                        term => replaceSelf(new MathFunctionInstance(this._function, term).reduce()))),
+                    ")")
     }
 }
