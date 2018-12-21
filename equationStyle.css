@@ -40,8 +40,14 @@ body{
     grid-row: 2;
 }
 
-sup {
-    font-size: 0.6em
+sup, sub {
+    font-size: 0.6em;
+    display:inline-block;
+}
+
+sub sub {
+    transform:translateY(0.2em);
+    font-size: 1em;
 }
 
 hr {
