@@ -10,9 +10,12 @@ class MathSymbol extends Term {
         super()
         this.hash = stringHash(name);
     }
-    private convertToHtmlCharacter(x:string):string {
+    private convertToHtmlCharacter(x: string): string {
         const entity = "&" + x + ";"
-        if($("<div/>").append(entity).text().length == 1)
+        const converted = $("<div/>").append(entity).text()
+        const codePoint = converted.codePointAt(0)
+        if (converted.length == 1 && codePoint != undefined
+            && codePoint >= 0x0370 && codePoint <= 0x03FF) //greek letters only - we dont want "copy" to be converted to the copyright sign or the like
             return entity
         else return x
     }
