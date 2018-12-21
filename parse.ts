@@ -134,7 +134,7 @@ function parseTerm(text: string): Term {
                     break;
                 default:
                     if (isLetter(state.currentChar)) {
-                        const string = consumeToken(state, isLetter);
+                        const string = consumeToken(state, x => isLetter(x) || isDigit(x) || x === "_");
                         left = new MathSymbol(string);
                     }
                     else if (isDigit(state.currentChar)) {
