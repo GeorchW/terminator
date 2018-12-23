@@ -1,6 +1,8 @@
 var hoveredElement: JQuery<HTMLElement> | undefined = undefined
 
-function clickable(content: string | JQuery<HTMLElement>, handler: JQuery.EventHandler<HTMLElement> | JQuery.EventHandlerBase<any, JQuery.Event> | false = false): JQuery<HTMLElement> {
+type OnClickHandler = JQuery.EventHandler<HTMLElement> | JQuery.EventHandlerBase<any, JQuery.Event> | false
+
+function clickable(content: string | JQuery<HTMLElement>, handler: OnClickHandler = false): JQuery<HTMLElement> {
     let base = typeof content == "string" ?
         $("<span/>").append(content) : content
     if (handler != false) {

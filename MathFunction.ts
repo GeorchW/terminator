@@ -58,7 +58,7 @@ class MathFunctionInstance extends Term {
         var result = $("<span/>")
         var context = params.context
         if (params.transformable) {
-            result = clickable(result, () => {
+            result = params.generateTransformClickable(result, () => {
                 if (context.currentEquation != undefined) {
                     const newEquation = context.currentEquation.apply(term => new MathFunctionInstance(this._function.inverse, term).reduce())
                     context.addNewEquation(newEquation)
