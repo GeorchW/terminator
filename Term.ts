@@ -63,4 +63,12 @@ class DisplayParams {
     untransformable(): DisplayParams {
         return new DisplayParams(this.context, false, this.replaceable, this.preferString)
     }
+    generateTransformClickable(content: string | JQuery<HTMLElement>, onClick: OnClickHandler): JQuery<HTMLElement> {
+        if (this.transformable)
+            return clickable(content, onClick).addClass("transformOnClick")
+        else if(typeof content == "string")
+            return $("<span/>").append(content)
+        else
+            return content
+    }
 }

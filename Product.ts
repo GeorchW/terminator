@@ -55,9 +55,9 @@ class Product extends AbelianTerm {
                         const newEquation = params.context.currentEquation.apply(product.getInverter(term))
                         params.context.addNewEquation(newEquation)
                     }
-                    result.append(clickable(
+                    result.append(params.generateTransformClickable(
                         product.itemToDisplayable(displayedTerm, params.untransformable(), terms.length > 1, product.getReplacer(term, replaceSelf)),
-                        params.transformable ? onClick : false))
+                        onClick))
 
                     i += 1
                 }
