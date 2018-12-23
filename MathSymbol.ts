@@ -21,7 +21,8 @@ class MathSymbol extends Term {
     }
     public toDisplayable(params: DisplayParams): JQuery<HTMLElement> {
         if (!params.preferString) {
-            const parts = this.name.split("_")
+            const displayName = this.name[0] == "\\" ? this.name.slice(1) : this.name
+            const parts = displayName.split("_")
             const mainText = parts[0]
             const subTexts = parts.slice(1)
             const result = $("<span/>").append(this.convertToHtmlCharacter(mainText));

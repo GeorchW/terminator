@@ -7,6 +7,15 @@ describe("parse", () => {
     })
 })
 
+/**
+ * These characters are not considered a multiplication, but a single token.
+ * Contains all greek characters for now, lowercase and uppercase.
+ * May be extended in the future.
+ */
+const tokenWhitelist = new Set([ 
+    "alpha", "beta", "gamma", "delta", "epsilon", "zeta", "eta", "theta", "iota", "kappa", "lambda", "mu", "nu", "xi", "omicron", "pi", "rho", "sigma", "tau", "upsilon", "phi", "chi", "psi", "omega",
+    "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega" ]);
+
 function parseTerm(text: string): Term {
     class ParserState {
         private currentPos: number;
@@ -17,7 +26,7 @@ function parseTerm(text: string): Term {
         public consumeChar() { this.currentPos++; }
     }
     function isLetter(char: string) {
-        return char.match("[a-zA-Z]") != null || char.charCodeAt(0) > 127;
+        return char.match("[a-zA-Z\\\\]") != null || char.charCodeAt(0) > 127;
     }
     function isDigit(char: string) {
         return char.match("\\d") != null;
@@ -105,6 +114,10 @@ function parseTerm(text: string): Term {
         else return new SimpleMathFunction(name)
     }
 
+    function consumeWhitespaces(state: ParserState) {
+        while (isWhitespace(state.currentChar)) state.consumeChar()
+    }
+
     function parseTermInternal(state: ParserState, returnPrecedence = 0): Term {
         var left: Term | undefined;
         while (state.currentChar != "") {
@@ -127,15 +140,31 @@ function parseTerm(text: string): Term {
                     break;
                 case "(":
                     const brackets = parseBrackets(state);
-                    if (left instanceof MathSymbol) {
-                        left = new MathFunctionInstance(getMathFunction(left.name), brackets)
-                    }
+                    if (left != undefined)
+                        left = new Product([left, brackets])
                     else left = brackets;
                     break;
                 default:
                     if (isLetter(state.currentChar)) {
                         const string = consumeToken(state, x => isLetter(x) || isDigit(x) || x === "_");
-                        left = new MathSymbol(string);
+                        consumeWhitespaces(state);
+                        var newTerm: Term;
+                        if (state.currentChar == "(") 
+                            newTerm = new MathFunctionInstance(getMathFunction(string), parseBrackets(state))
+                        else {
+                            if(tokenWhitelist.has(string) || string[0] == "\\")
+                                newTerm = new MathSymbol(string)
+                            else {
+                                const terms = []
+                                for (let i = 0; i < string.length; i++) {
+                                    terms.push(new MathSymbol(string.charAt(i)))
+                                }
+                                newTerm = new Product(terms)
+                            }
+                        }
+                        if (left != undefined)
+                            left = new Product([left, newTerm])
+                        else left = newTerm;
                     }
                     else if (isDigit(state.currentChar)) {
                         const string = consumeToken(state, isDigit);
